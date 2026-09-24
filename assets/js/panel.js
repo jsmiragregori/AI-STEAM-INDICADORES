@@ -47,8 +47,6 @@ function calculados(d) {
   const codigo = c.site.lineas + c.panel.lineas + c.tooling.lineas;
   return {
     codigo,
-    conocimiento: d.contenido.recursosAbiertos + d.contenido.plantillas,
-    textosLegales: d.contenido.documentosLegales * d.contenido.idiomas,
     textosTraducidos: d.contenido.cadenasTraducidas * d.contenido.idiomas,
     ratioPruebas: c.tests.lineas / codigo,
   };
@@ -57,10 +55,6 @@ function calculados(d) {
 function variables(d, calc) {
   return {
     fecha: fecha(d.generado),
-    skills: num(d.contenido.competencias),
-    oer: num(d.contenido.recursosAbiertos),
-    tpl: num(d.contenido.plantillas),
-    bodies: num(d.contenido.organosGobernanza),
     langs: num(d.contenido.idiomas),
     total: '',
     panel: num(d.plataforma.seccionesPanel),
@@ -173,7 +167,6 @@ function pintar() {
   const calc = calculados(datos);
   const vars = variables(datos, calc);
   const porClave = {
-    'chart.mp.sub': { total: num(datos.contenido.marketplace.total) },
     'chart.act.sub': { total: num(datos.proceso.commits) },
     'b.strings.p': { total: num(calc.textosTraducidos) },
   };
@@ -186,13 +179,9 @@ function pintar() {
     e.textContent = typeof valor === 'number' ? num(valor) : '–';
   }
 
-  const tabs = datos.contenido.marketplace.porPestana;
-  barrasH(document.getElementById('chart-mp'),
-    Object.entries(tabs).map(([id, v]) => ({ etiqueta: t(`tab.${id}`), valor: v })));
-
   const c = datos.codigo.componentes;
   const orden = [['site', false], ['panel', false], ['tooling', false], ['tests', false],
-    ['content', true], ['generated', true], ['docs', true]];
+    ['docs', true]];
   barrasH(document.getElementById('chart-code'),
     orden.filter(([k]) => c[k]).map(([k, otro]) => ({ etiqueta: t(`comp.${k}`), valor: c[k].lineas, otro })),
     t('lines'));
