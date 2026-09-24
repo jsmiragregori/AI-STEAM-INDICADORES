@@ -1,0 +1,118 @@
+{
+  "generado": "2026-09-24",
+  "contenido": {
+    "seccionesPrincipales": 7,
+    "socios": 23,
+    "paises": 12,
+    "entidadesAdheridas": 14,
+    "sectores": 7,
+    "cursos": 63,
+    "competencias": 26,
+    "marketplace": {
+      "total": 45,
+      "porPestana": {
+        "mentorings": 9,
+        "challenges": 8,
+        "validations": 9,
+        "pilots": 7,
+        "cases": 12
+      }
+    },
+    "recursosAbiertos": 13,
+    "plantillas": 23,
+    "documentosGobernanza": 12,
+    "organosGobernanza": 6,
+    "documentosLegales": 4,
+    "idiomas": 3,
+    "cadenasTraducidas": 1387
+  },
+  "plataforma": {
+    "seccionesPanel": 16,
+    "cargadores": 14,
+    "dependenciasEjecucionSitio": 0,
+    "bibliotecasAutoalojadas": 4,
+    "diagramasPublicados": 12
+  },
+  "codigo": {
+    "componentes": {
+      "docs": {
+        "ficheros": 456,
+        "lineas": 83234
+      },
+      "panel": {
+        "ficheros": 50,
+        "lineas": 20661
+      },
+      "content": {
+        "ficheros": 129,
+        "lineas": 17415
+      },
+      "tests": {
+        "ficheros": 209,
+        "lineas": 32111
+      },
+      "tooling": {
+        "ficheros": 68,
+        "lineas": 19357
+      },
+      "site": {
+        "ficheros": 28,
+        "lineas": 8752
+      },
+      "vendor": {
+        "ficheros": 7,
+        "lineas": 1159
+      },
+      "generated": {
+        "ficheros": 15,
+        "lineas": 58924
+      }
+    },
+    "lenguajes": {
+      "Python": 59762,
+      "JavaScript": 20438,
+      "CSS": 654,
+      "HTML": 27
+    },
+    "casosDePrueba": 2189
+  },
+  "proceso": {
+    "inicio": "2026-05",
+    "meses": 5,
+    "commits": 1082,
+    "actividad": [
+      {
+        "mes": "2026-05",
+        "content": 0,
+        "vanilla": 360,
+        "diagrams": 0
+      },
+      {
+        "mes": "2026-06",
+        "content": 0,
+        "vanilla": 168,
+        "diagrams": 0
+      },
+      {
+        "mes": "2026-07",
+        "content": 17,
+        "vanilla": 26,
+        "diagrams": 0
+      },
+      {
+        "mes": "2026-08",
+        "content": 14,
+        "vanilla": 31,
+        "diagrams": 0
+      },
+      {
+        "mes": "2026-09",
+        "content": 428,
+        "vanilla": 37,
+        "diagrams": 1
+      }
+    ],
+    "sesionesDocumentadas": 212,
+    "documentos": 456
+  }
+}

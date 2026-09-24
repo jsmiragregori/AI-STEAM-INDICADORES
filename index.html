@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indicadores del proyecto · AI-STEAM Network</title>
+  <meta name="description" content="Indicadores del proyecto AI-STEAM Network: plataforma, arquitectura, calidad, confianza y proceso de trabajo.">
+  <link rel="icon" href="./favicon.ico">
+  <link rel="preload" href="./assets/fonts/instrument-sans/instrument-sans-v4-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./assets/css/panel.css">
+  <script type="module" src="./assets/js/panel.js"></script>
+</head>
+<body>
+  <a class="skip" href="#contenido" data-t="skip">Saltar al contenido</a>
+
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">AI</span>
+        <span>
+          <span class="brand-name">AI-STEAM Network</span>
+          <span class="brand-sub" data-t="brand.sub">Indicadores del proyecto</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Secciones">
+        <a href="#plataforma" data-t="nav.platform">Plataforma</a>
+        <a href="#arquitectura" data-t="nav.build">Arquitectura</a>
+        <a href="#calidad" data-t="nav.quality">Calidad</a>
+        <a href="#confianza" data-t="nav.trust">Confianza</a>
+        <a href="#proceso" data-t="nav.process">Proceso</a>
+      </nav>
+      <div class="lang" role="group" aria-label="Idioma / Language">
+        <button type="button" data-lang="es" aria-pressed="true" lang="es">ES</button>
+        <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="hero" id="top">
+    <div class="wrap">
+      <span class="eyebrow" data-t="hero.eyebrow">Informe de indicadores</span>
+      <h1 data-t="hero.title">Lo que hemos construido para la red AI-STEAM</h1>
+      <p data-t="hero.text"></p>
+      <p class="issuer" data-t="hero.issuer"></p>
+    </div>
+  </div>
+
+  <main id="contenido" class="wrap" tabindex="-1">
+    <div id="error" hidden class="error" role="alert" data-t="error"></div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-value" data-n="contenido.socios">–</div><div class="kpi-label" data-t="kpi.partners"></div></div>
+      <div class="kpi"><div class="kpi-value" data-n="contenido.paises">–</div><div class="kpi-label" data-t="kpi.countries"></div></div>
+      <div class="kpi"><div class="kpi-value" data-n="contenido.idiomas">–</div><div class="kpi-label" data-t="kpi.languages"></div></div>
+      <div class="kpi"><div class="kpi-value" data-n="contenido.seccionesPrincipales">–</div><div class="kpi-label" data-t="kpi.sections"></div></div>
+      <div class="kpi"><div class="kpi-value" data-n="proceso.commits">–</div><div class="kpi-label" data-t="kpi.changes"></div></div>
+      <div class="kpi"><div class="kpi-value" data-n="codigo.casosDePrueba">–</div><div class="kpi-label" data-t="kpi.tests"></div></div>
+    </div>
+
+    <!-- 01 · Plataforma -->
+    <section class="block" id="plataforma" aria-labelledby="h-s1">
+      <div class="section-head">
+        <span class="section-num" data-t="s1.num"></span>
+        <h2 id="h-s1" data-t="s1.title"></h2>
+        <p data-t="s1.text"></p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card"><div class="stat" data-n="contenido.entidadesAdheridas">–</div><h3 data-t="c.stakeholders.t"></h3><p data-t="c.stakeholders.p"></p></div>
+        <div class="card"><div class="stat" data-n="contenido.sectores">–</div><h3 data-t="c.sectors.t"></h3><p data-t="c.sectors.p"></p></div>
+        <div class="card"><div class="stat" data-n="contenido.cursos">–</div><h3 data-t="c.courses.t"></h3><p data-t="c.courses.p"></p></div>
+        <div class="card"><div class="stat" data-n="calc.conocimiento">–</div><h3 data-t="c.knowledge.t"></h3><p data-t="c.knowledge.p"></p></div>
+        <div class="card"><div class="stat" data-n="contenido.documentosGobernanza">–</div><h3 data-t="c.governance.t"></h3><p data-t="c.governance.p"></p></div>
+        <div class="card"><div class="stat" data-n="calc.textosLegales">–</div><h3 data-t="c.legal.t"></h3><p data-t="c.legal.p"></p></div>
+      </div>
+      <div class="card chart-card" style="margin-top:1.25rem">
+        <p class="chart-title" data-t="chart.mp.title"></p>
+        <p class="chart-sub" data-t="chart.mp.sub"></p>
+        <div class="chart" id="chart-mp"></div>
+      </div>
+    </section>
+
+    <!-- 02 · Arquitectura -->
+    <section class="block" id="arquitectura" aria-labelledby="h-s2">
+      <div class="section-head">
+        <span class="section-num" data-t="s2.num"></span>
+        <h2 id="h-s2" data-t="s2.title"></h2>
+        <p data-t="s2.text"></p>
+      </div>
+      <ol class="flow">
+        <li><h3 data-t="flow.1.t"></h3><p data-t="flow.1.p"></p></li>
+        <li><h3 data-t="flow.2.t"></h3><p data-t="flow.2.p"></p></li>
+        <li><h3 data-t="flow.3.t"></h3><p data-t="flow.3.p"></p></li>
+        <li><h3 data-t="flow.4.t"></h3><p data-t="flow.4.p"></p></li>
+      </ol>
+      <div class="grid grid-3">
+        <div class="card"><div class="stat" data-n="plataforma.dependenciasEjecucionSitio">–</div><h3 data-t="b.deps.t"></h3><p data-t="b.deps.p"></p></div>
+        <div class="card"><div class="stat" data-n="calc.textosTraducidos">–</div><h3 data-t="b.strings.t"></h3><p data-t="b.strings.p"></p></div>
+        <div class="card"><div class="stat" data-n="plataforma.diagramasPublicados">–</div><h3 data-t="b.diagrams.t"></h3><p><span data-t="b.diagrams.p"></span> <a href="https://jsmiragregori.github.io/AI-STEAM-DIAGRAMS/" data-t="b.diagrams.link"></a></p></div>
+      </div>
+    </section>
+
+    <!-- 03 · Calidad -->
+    <section class="block" id="calidad" aria-labelledby="h-s3">
+      <div class="section-head">
+        <span class="section-num" data-t="s3.num"></span>
+        <h2 id="h-s3" data-t="s3.title"></h2>
+        <p data-t="s3.text"></p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card"><div class="stat" data-n="calc.codigo">–</div><h3 data-t="q.code.t"></h3><p data-t="q.code.p"></p></div>
+        <div class="card"><div class="stat" data-n="codigo.componentes.tests.lineas">–</div><h3 data-t="q.tests.t"></h3><p data-t="q.tests.p"></p></div>
+        <div class="card"><div class="stat" data-n="codigo.casosDePrueba">–</div><h3 data-t="q.cases.t"></h3><p data-t="q.cases.p"></p></div>
+      </div>
+      <div class="card chart-card" style="margin-top:1.25rem">
+        <p class="chart-title" data-t="chart.code.title"></p>
+        <p class="chart-sub" data-t="chart.code.sub"></p>
+        <ul class="legend">
+          <li><span class="swatch" aria-hidden="true"></span><span data-t="legend.code"></span></li>
+          <li><span class="swatch other" aria-hidden="true"></span><span data-t="legend.other"></span></li>
+        </ul>
+        <div class="chart" id="chart-code"></div>
+        <p class="note" data-t="q.langs"></p>
+      </div>
+    </section>
+
+    <!-- 04 · Confianza -->
+    <section class="block" id="confianza" aria-labelledby="h-s4">
+      <div class="section-head">
+        <span class="section-num" data-t="s4.num"></span>
+        <h2 id="h-s4" data-t="s4.title"></h2>
+        <p data-t="s4.text"></p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card pledge"><span class="pledge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><div><h3 data-t="t.sec.t"></h3><p data-t="t.sec.p"></p></div></div>
+        <div class="card pledge"><span class="pledge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><h3 data-t="t.access.t"></h3><p data-t="t.access.p"></p></div></div>
+        <div class="card pledge"><span class="pledge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="7" rx="2"/><rect x="2" y="14" width="20" height="7" rx="2"/><path d="M6 6.5h.01M6 17.5h.01"/></svg></span><div><h3 data-t="t.infra.t"></h3><p data-t="t.infra.p"></p></div></div>
+        <div class="card pledge"><span class="pledge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><path d="M4 4l16 16"/></svg></span><div><h3 data-t="t.priv.t"></h3><p data-t="t.priv.p"></p></div></div>
+        <div class="card pledge"><span class="pledge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="2"/><path d="M5 8.5l7 1.5 7-1.5M12 10v5l-3 6M12 15l3 6"/></svg></span><div><h3 data-t="t.a11y.t"></h3><p data-t="t.a11y.p"></p></div></div>
+        <div class="card pledge"><span class="pledge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></span><div><h3 data-t="t.lang.t"></h3><p data-t="t.lang.p"></p></div></div>
+      </div>
+      <div class="zeros">
+        <div class="zero"><b>0</b><span data-t="zero.cookies"></span></div>
+        <div class="zero"><b>0</b><span data-t="zero.analytics"></span></div>
+        <div class="zero"><b>0</b><span data-t="zero.external"></span></div>
+      </div>
+    </section>
+
+    <!-- 05 · Proceso -->
+    <section class="block" id="proceso" aria-labelledby="h-s5">
+      <div class="section-head">
+        <span class="section-num" data-t="s5.num"></span>
+        <h2 id="h-s5" data-t="s5.title"></h2>
+        <p data-t="s5.text"></p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card"><div class="stat" data-n="proceso.meses">–</div><h3 data-t="p.months.t"></h3><p data-t="p.months.p"></p></div>
+        <div class="card"><div class="stat" data-n="proceso.sesionesDocumentadas">–</div><h3 data-t="p.sessions.t"></h3><p data-t="p.sessions.p"></p></div>
+        <div class="card"><div class="stat" data-n="proceso.documentos">–</div><h3 data-t="p.docs.t"></h3><p data-t="p.docs.p"></p></div>
+      </div>
+      <div class="card chart-card" style="margin-top:1.25rem">
+        <p class="chart-title" data-t="chart.act.title"></p>
+        <p class="chart-sub" data-t="chart.act.sub"></p>
+        <div class="chart" id="chart-act"></div>
+        <p class="note" data-t="chart.act.note"></p>
+      </div>
+    </section>
+
+    <section class="block method" aria-labelledby="h-m">
+      <div class="card plain">
+        <h2 id="h-m" style="font-size:1.2rem;margin-top:0;color:var(--text)" data-t="m.title"></h2>
+        <ul>
+          <li data-t="m.1"></li>
+          <li data-t="m.2"></li>
+          <li data-t="m.3"></li>
+          <li data-t="m.4"></li>
+          <li data-t="m.5"></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <span data-t="footer.left"></span>
+      <span data-t="footer.right"></span>
+    </div>
+  </footer>
+
+  <div class="tooltip" id="tooltip" role="presentation"></div>
+</body>
+</html>
