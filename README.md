@@ -8,6 +8,9 @@ externas, en español e inglés.
 quality, trust and working process. A static page with no external dependencies, in Spanish
 and English.
 
+**Sitio publicado / Published site:** https://jsmiragregori.github.io/AI-STEAM-INDICADORES/
+(`?lang=es` · `?lang=en`)
+
 ## Datos / Data
 
 `data/indicadores.json` se genera automáticamente a partir de las aplicaciones del proyecto;
