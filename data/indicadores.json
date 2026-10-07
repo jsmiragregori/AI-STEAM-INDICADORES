@@ -1,5 +1,5 @@
 {
-  "generado": "2026-09-24",
+  "generado": "2026-10-07",
   "contenido": {
     "seccionesPrincipales": 7,
     "socios": 23,
@@ -12,59 +12,59 @@
     "cargadores": 14,
     "dependenciasEjecucionSitio": 0,
     "bibliotecasAutoalojadas": 4,
-    "diagramasPublicados": 12
+    "diagramasPublicados": 20
   },
   "codigo": {
     "componentes": {
       "docs": {
-        "ficheros": 456,
-        "lineas": 83263
+        "ficheros": 539,
+        "lineas": 96216
       },
       "panel": {
-        "ficheros": 50,
-        "lineas": 20661
+        "ficheros": 65,
+        "lineas": 23923
       },
       "tests": {
-        "ficheros": 210,
-        "lineas": 32149
+        "ficheros": 312,
+        "lineas": 55002
       },
       "tooling": {
-        "ficheros": 69,
-        "lineas": 19558
+        "ficheros": 97,
+        "lineas": 32338
       },
       "site": {
-        "ficheros": 28,
-        "lineas": 8752
+        "ficheros": 30,
+        "lineas": 9108
       }
     },
     "lenguajes": {
-      "Python": 59762,
-      "JavaScript": 20677,
-      "CSS": 654,
+      "Python": 88405,
+      "JavaScript": 31189,
+      "CSS": 750,
       "HTML": 27
     },
-    "casosDePrueba": 2193
+    "casosDePrueba": 3966
   },
   "proceso": {
     "inicio": "2026-05",
-    "meses": 5,
-    "commits": 1083,
+    "meses": 6,
+    "commits": 2381,
     "actividad": [
       {
         "mes": "2026-05",
-        "content": 0,
+        "content": 476,
         "vanilla": 360,
         "diagrams": 0
       },
       {
         "mes": "2026-06",
-        "content": 0,
+        "content": 158,
         "vanilla": 168,
         "diagrams": 0
       },
       {
         "mes": "2026-07",
-        "content": 17,
+        "content": 174,
         "vanilla": 26,
         "diagrams": 0
       },
@@ -76,12 +76,18 @@
       },
       {
         "mes": "2026-09",
-        "content": 429,
-        "vanilla": 37,
-        "diagrams": 1
+        "content": 513,
+        "vanilla": 63,
+        "diagrams": 4
+      },
+      {
+        "mes": "2026-10",
+        "content": 343,
+        "vanilla": 51,
+        "diagrams": 0
       }
     ],
-    "sesionesDocumentadas": 213,
-    "documentos": 456
+    "sesionesDocumentadas": 361,
+    "documentos": 539
   }
 }
