@@ -91,7 +91,7 @@ export const TEXTOS = {
     'p.docs.p': 'Planes, decisiones, manuales de despliegue y guías de uso.',
     'chart.act.title': 'Cambios registrados por mes',
     'chart.act.sub': '{total} cambios en los repositorios del proyecto',
-    'chart.act.note': 'El historial del repositorio de gestión de contenidos comienza en julio de 2026; el trabajo anterior está registrado en el del sitio público.',
+    'chart.act.note': 'El historial de los repositorios de contenido y del sitio público comienza en mayo de 2026.',
 
     'm.title': 'Cómo se han medido estos indicadores',
     'm.1': 'Todas las cifras las calcula un programa a partir de las propias aplicaciones y de su historial de versiones; ninguna se introduce a mano.',
@@ -199,7 +199,7 @@ export const TEXTOS = {
     'p.docs.p': 'Plans, decisions, deployment manuals and user guides.',
     'chart.act.title': 'Recorded changes per month',
     'chart.act.sub': '{total} changes across the project repositories',
-    'chart.act.note': 'The history of the content management repository begins in July 2026; earlier work is recorded in the public site repository.',
+    'chart.act.note': 'The history of the content and public site repositories begins in May 2026.',
 
     'm.title': 'How these indicators were measured',
     'm.1': 'Every figure is calculated by a program from the applications themselves and their version history; none is entered by hand.',
