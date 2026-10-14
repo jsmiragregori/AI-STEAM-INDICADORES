@@ -66,23 +66,16 @@
       <figure class="arch" aria-labelledby="arch-cap">
         <figcaption class="sr-only" id="arch-cap" data-t="arch.caption"></figcaption>
         <div class="arch-zones">
-          <!-- Zona 1 · intranet privada -->
+          <!-- Zona 1 · navegador público (lo que ve la gente) -->
           <div class="zone">
-            <p class="zone-tag"><span>1</span><span data-t="arch.z1"></span></p>
-            <div class="zone-box zone-priv">
-              <div class="node">
-                <div class="mock-panel" aria-hidden="true">
-                  <span class="mp-bar"><i></i><i></i><i></i></span>
-                  <span class="mp-body"><span class="mp-side"></span><span class="mp-doc"><i></i><i></i><i></i><i class="short"></i></span><span class="mp-save"></span></span>
-                </div>
-                <h3 data-t="arch.panel.t"></h3>
-                <p data-t="arch.panel.p"></p>
+            <p class="zone-tag"><span>1</span><span data-t="arch.z3"></span></p>
+            <div class="zone-box zone-pub">
+              <div class="mock-site" aria-hidden="true">
+                <span class="ms-bar"><i></i><i></i><i></i><span class="ms-url"></span></span>
+                <span class="ms-grid"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></span>
               </div>
-              <div class="node node-row">
-                <span class="node-icon" aria-hidden="true">{ }</span>
-                <div><h3 data-t="arch.files.t"></h3><p data-t="arch.files.p"></p></div>
-                <span class="nodb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/><path d="M3 21L21 3"/></svg><span data-t="arch.nodb"></span></span>
-              </div>
+              <h3 data-t="arch.site.t"></h3>
+              <p data-t="arch.site.p"></p>
             </div>
           </div>
           <!-- Zona 2 · puente de publicación -->
@@ -100,16 +93,23 @@
               <span class="arrows" aria-hidden="true"><i></i><i></i></span>
             </div>
           </div>
-          <!-- Zona 3 · navegador público -->
+          <!-- Zona 3 · intranet privada (lo que se administra) -->
           <div class="zone">
-            <p class="zone-tag"><span>3</span><span data-t="arch.z3"></span></p>
-            <div class="zone-box zone-pub">
-              <div class="mock-site" aria-hidden="true">
-                <span class="ms-bar"><i></i><i></i><i></i><span class="ms-url"></span></span>
-                <span class="ms-grid"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></span>
+            <p class="zone-tag"><span>3</span><span data-t="arch.z1"></span></p>
+            <div class="zone-box zone-priv">
+              <div class="node">
+                <div class="mock-panel" aria-hidden="true">
+                  <span class="mp-bar"><i></i><i></i><i></i></span>
+                  <span class="mp-body"><span class="mp-side"></span><span class="mp-doc"><i></i><i></i><i></i><i class="short"></i></span><span class="mp-save"></span></span>
+                </div>
+                <h3 data-t="arch.panel.t"></h3>
+                <p data-t="arch.panel.p"></p>
               </div>
-              <h3 data-t="arch.site.t"></h3>
-              <p data-t="arch.site.p"></p>
+              <div class="node node-row">
+                <span class="node-icon" aria-hidden="true">{ }</span>
+                <div><h3 data-t="arch.files.t"></h3><p data-t="arch.files.p"></p></div>
+                <span class="nodb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/><path d="M3 21L21 3"/></svg><span data-t="arch.nodb"></span></span>
+              </div>
             </div>
           </div>
         </div>

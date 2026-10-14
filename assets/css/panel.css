@@ -262,7 +262,7 @@ section.block { padding: 5.5rem 0 1rem; }
   position: relative; background: var(--canvas); padding: .2rem .5rem; font-size: .72rem; font-weight: 700;
   letter-spacing: .07em; text-transform: uppercase; color: var(--blue); text-align: center;
 }
-.arrows { position: relative; display: flex; justify-content: space-between; width: 100%; }
+.arrows { position: relative; display: flex; justify-content: space-between; width: 100%; transform: scaleX(-1); /* de la intranet (derecha) al sitio público (izquierda) */ }
 .arrows i {
   display: block; width: 34%; height: 3px; background: var(--blue); border-radius: 2px; position: relative; opacity: .8;
 }
