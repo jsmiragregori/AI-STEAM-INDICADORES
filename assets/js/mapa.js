@@ -1,7 +1,7 @@
-// Mapa del código (V1): treemap interactivo de dos niveles, sin dependencias.
-// Nivel 1: aplicaciones (cada una con su color categórico). Nivel 2: funciones,
-// en tonos del color de su aplicación. Clic, Enter o Espacio amplía una
-// aplicación (Esc o las migas vuelven). Selector líneas / ficheros.
+// Mapa del código: una barra horizontal por aplicación, proporcional a su código
+// y partida en tramos (sus funciones), con el color de la aplicación en tonos.
+// Cada fila se despliega para ver el detalle de sus funciones con barras propias.
+// Selector líneas / ficheros. Sin dependencias.
 // Todo el texto se inserta con textContent: ninguna cadena se interpreta como HTML.
 
 const APLICACIONES = [
@@ -11,23 +11,16 @@ const APLICACIONES = [
   ['herramientas', 'comp.herramientas'],
   ['tests', 'comp.tests'],
 ];
-const TONOS = [50, 40, 32, 26, 20, 15, 11]; // % del color de la aplicación en cada tono
-const ALTO_CABECERA = 30; // altura de la franja con el nombre de la aplicación (px)
-const MARCO = 4;          // marco de color alrededor de las funciones (px)
-const HUECO = 3;          // separación entre bloques y entre funciones (px)
-const DURACION = 420;     // duración de las animaciones (coincide con --map-dur)
+const TONOS = 7; // clases n1…n7: del color pleno de la aplicación a su tono más claro
 const LENGUAJES = { Python: 'py', JavaScript: 'js', CSS: 'css', HTML: 'html' };
 
 let UI = null;
 let ctx = null;      // { t, num, tip } del panel
 let modelo = null;   // datos normalizados del mapa
-let piezas = [];     // bloques, cabeceras y funciones ya creados
-let estado = { nivel: 'todo', app: null, metrica: 'lineas' };
-let ajusteId = 0;
-let ultimoTam = { w: 0, h: 0 };
-const porElemento = new Map();
+let filas = [];      // una entrada por aplicación con sus elementos
+let metrica = 'lineas';
+const abiertas = new Set();
 
-const reducido = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const el = (etiqueta, clase, texto) => {
   const e = document.createElement(etiqueta);
   if (clase) e.className = clase;
@@ -36,68 +29,8 @@ const el = (etiqueta, clase, texto) => {
 };
 const numero = (v) => { const n = Number(v); return Number.isFinite(n) && n > 0 ? n : 0; };
 const porcentaje = (v, total) => (total > 0 ? (100 * v) / total : 0);
-const valorDe = (obj, metrica) => numero(obj[metrica]);
-const inset = (r, d) => ({
-  x: r.x + d, y: r.y + d,
-  w: Math.max(0, r.w - 2 * d), h: Math.max(0, r.h - 2 * d),
-});
 
-// --- Reparto de áreas (squarified) -----------------------------------------------
-// Entradas: [{ id, valor }] con valor >= 0. Devuelve Map id → { x, y, w, h }.
-function squarify(entradas, x, y, w, h) {
-  const salida = new Map();
-  const items = entradas.filter((e) => e.valor > 0).sort((a, b) => b.valor - a.valor);
-  if (!items.length || w <= 0 || h <= 0) return salida;
-  if (items.length === 1) { salida.set(items[0].id, { x, y, w, h }); return salida; }
-  const total = items.reduce((s, e) => s + e.valor, 0);
-  const escala = (w * h) / total;
-  for (const it of items) it.area = it.valor * escala;
-  let cx = x, cy = y, cw = w, ch = h, inicio = 0;
-  while (inicio < items.length) {
-    const horizontal = cw >= ch;
-    const lado = horizontal ? ch : cw;
-    let fin = inicio + 1;
-    let area = items[inicio].area;
-    let mejor = peorRatio(items, inicio, fin, lado, area);
-    while (fin < items.length) {
-      const areaNueva = area + items[fin].area;
-      const ratio = peorRatio(items, inicio, fin + 1, lado, areaNueva);
-      if (ratio <= mejor) { fin += 1; area = areaNueva; mejor = ratio; } else break;
-    }
-    if (horizontal) {
-      const ancho = area / ch;
-      let yy = cy;
-      for (let i = inicio; i < fin; i++) {
-        const alto = items[i].area / ancho;
-        salida.set(items[i].id, { x: cx, y: yy, w: ancho, h: alto });
-        yy += alto;
-      }
-      cx += ancho; cw -= ancho;
-    } else {
-      const alto = area / cw;
-      let xx = cx;
-      for (let i = inicio; i < fin; i++) {
-        const ancho = items[i].area / alto;
-        salida.set(items[i].id, { x: xx, y: cy, w: ancho, h: alto });
-        xx += ancho;
-      }
-      cy += alto; ch -= alto;
-    }
-    inicio = fin;
-  }
-  return salida;
-}
-function peorRatio(items, i0, i1, lado, area) {
-  let max = 0, min = Infinity;
-  for (let i = i0; i < i1; i++) {
-    if (items[i].area > max) max = items[i].area;
-    if (items[i].area < min) min = items[i].area;
-  }
-  const a2 = area * area, s2 = lado * lado;
-  return Math.max((s2 * max) / a2, a2 / (s2 * min));
-}
-
-// --- Inicialización y pintado -----------------------------------------------------
+// --- Inicialización ---------------------------------------------------------------
 export function pintarMapa(json, contexto) {
   if (!iniciar()) return;
   ctx = contexto;
@@ -110,10 +43,15 @@ export function pintarMapa(json, contexto) {
   }
   UI.vacio.hidden = true;
   UI.cuerpo.hidden = false;
-  textosEstaticos();
+  UI.metricas.setAttribute('aria-label', ctx.t('map.metrics.aria'));
+  UI.lista.setAttribute('aria-label', ctx.t('chart.code.title'));
+  for (const b of UI.botones) b.setAttribute('aria-pressed', String(b.dataset.metric === metrica));
   construir();
-  pintarMigas();
-  pintarExtras();
+  actualizar();
+  pintarLenguajes();
+  pintarDocs();
+  UI.meta.hidden = UI.langs.hidden && UI.docs.hidden;
+  pintarTabla();
 }
 
 function iniciar() {
@@ -124,9 +62,8 @@ function iniciar() {
   UI = {
     card,
     cuerpo: buscar('map-body'),
-    crumbs: buscar('map-crumbs'),
-    esc: buscar('map-esc'),
-    mapa: buscar('map-code'),
+    total: buscar('map-total'),
+    lista: buscar('map-code'),
     live: buscar('map-live'),
     vacio: buscar('map-empty'),
     metricas: buscar('map-metric'),
@@ -136,51 +73,25 @@ function iniciar() {
     langbar: buscar('langbar'),
     legendaLangs: buscar('langbar-legend'),
     docs: buscar('docs-chip'),
-    detalles: buscar('map-details'),
     tabla: buscar('map-table-box'),
   };
-  if (!UI.mapa || !UI.crumbs) return false;
-  for (const b of UI.botones) {
-    b.addEventListener('click', () => cambiarMetrica(b.dataset.metric));
-  }
-  UI.card.addEventListener('keydown', (ev) => {
-    if (ev.key === 'Escape' && estado.nivel === 'app') {
-      ev.stopPropagation();
-      volver();
-    }
+  if (!UI.lista) return false;
+  for (const b of UI.botones) b.addEventListener('click', () => cambiarMetrica(b.dataset.metric));
+  UI.lista.addEventListener('mousemove', (ev) => {
+    const seg = ev.target.closest('[data-tip]');
+    if (!seg) { ctx.tip.ocultar(); return; }
+    ctx.tip.mostrar(ev, seg.dataset.tip, seg.dataset.tipValor);
   });
-  UI.mapa.addEventListener('click', (ev) => {
-    if (!modelo || estado.nivel !== 'todo') return;
-    const nodo = ev.target.closest('[data-app]');
-    if (nodo) ampliar(nodo.dataset.app);
-  });
-  UI.mapa.addEventListener('mousemove', (ev) => {
-    const nodo = ev.target.closest('.tm-tile, .tm-head');
-    const datos2 = nodo && porElemento.get(nodo);
-    if (!datos2) return;
-    const { etiqueta, detalle } = tooltipDe(datos2);
-    ctx.tip.mostrar(ev, etiqueta, detalle);
-  });
-  UI.mapa.addEventListener('mouseleave', () => ctx && ctx.tip.ocultar());
-  UI.mapa.addEventListener('focusin', (ev) => {
-    const nodo = ev.target.closest('.tm-tile, .tm-head');
-    const datos2 = nodo && porElemento.get(nodo);
-    if (!datos2) return;
-    const { etiqueta, detalle } = tooltipDe(datos2);
-    ctx.tip.mostrarEn(nodo, etiqueta, detalle);
-  });
-  UI.mapa.addEventListener('focusout', () => ctx && ctx.tip.ocultar());
-  if ('ResizeObserver' in window) {
-    new ResizeObserver(() => {
-      if (!modelo) return;
-      const w = UI.mapa.clientWidth, h = UI.mapa.clientHeight;
-      if (w === ultimoTam.w && h === ultimoTam.h) return;
-      calcular();
-      programarAjuste(true);
-    }).observe(UI.mapa);
-  }
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => { if (modelo) programarAjuste(false); });
+  UI.lista.addEventListener('mouseleave', () => ctx && ctx.tip.ocultar());
+  // Las barras crecen la primera vez que la lista entra en pantalla.
+  const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reducido && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entradas) => {
+      if (entradas.some((e) => e.isIntersecting)) { UI.lista.classList.add('ver'); io.disconnect(); }
+    }, { threshold: 0.25 });
+    io.observe(UI.lista);
+  } else {
+    UI.lista.classList.add('ver');
   }
   return true;
 }
@@ -203,16 +114,14 @@ function normalizar(json) {
       .filter((f) => f.lineas > 0 || f.ficheros > 0);
     const lineas = funciones.reduce((s, f) => s + f.lineas, 0);
     const ficheros = funciones.reduce((s, f) => s + f.ficheros, 0);
-    if (funciones.length && (lineas > 0 || ficheros > 0)) {
-      apps.push({ clave, etiqueta: ctx.t(claveTexto), lineas, ficheros, funciones });
-    }
+    if (funciones.length) apps.push({ clave, claveTexto, lineas, ficheros, funciones });
   }
   if (!apps.length) return null;
   const totales = {
     lineas: apps.reduce((s, a) => s + a.lineas, 0),
     ficheros: apps.reduce((s, a) => s + a.ficheros, 0),
   };
-  const codigo = (json && json.codigo) || {};
+  const codigo = json.codigo;
   const crudosDocs = codigo.componentes && codigo.componentes.docs;
   const docs = crudosDocs && numero(crudosDocs.lineas) > 0
     ? { lineas: numero(crudosDocs.lineas), ficheros: numero(crudosDocs.ficheros) }
@@ -227,334 +136,145 @@ function normalizar(json) {
 }
 
 // --- Textos de ayuda --------------------------------------------------------------
-function etiquetaApp(clave) {
-  const par = APLICACIONES.find(([c]) => c === clave);
-  const etiqueta = par ? ctx.t(par[1]) : clave;
-  return etiqueta === par?.[1] ? clave : etiqueta;
-}
+const etiquetaApp = (app) => ctx.t(app.claveTexto);
 function etiquetaFn(claveApp, claveFn) {
   const clave = `fn.${claveApp}.${claveFn}`;
   const texto = ctx.t(clave);
   return texto === clave ? claveFn : texto;
 }
-function pluralFicheros(n) { return n === 1 ? ctx.t('file.one') : ctx.t('files'); }
+const pluralFicheros = (n) => (n === 1 ? ctx.t('file.one') : ctx.t('files'));
+const unidad = (valor) => (metrica === 'lineas' ? ctx.t('lines') : pluralFicheros(valor));
 /** Porcentaje con un decimal; si algo positivo redondea a 0,0, se dice «< 0,1 %». */
 function pctTexto(p) {
   if (p > 0 && p < 0.05) return ctx.t('map.pctLess');
   return ctx.t('map.pctFmt', { p: ctx.num(p, 1) });
 }
-function unidadDe(metrica, valor) {
-  return metrica === 'lineas' ? ctx.t('lines') : pluralFicheros(valor);
-}
-/** Detalle completo de una función: valor medido, % (nivel y total) y la otra cara. */
-function detalleFn(app, fn) {
-  const metrica = estado.metrica;
-  const partes = [];
-  if (estado.nivel === 'app') {
-    partes.push(`${pctTexto(porcentaje(fn[metrica], app[metrica]))} ${ctx.t('map.ofApp')}`);
-  }
-  partes.push(`${pctTexto(porcentaje(fn[metrica], modelo.totales[metrica]))} ${ctx.t('map.ofTotal')}`);
-  const otro = metrica === 'lineas'
-    ? `${ctx.num(fn.ficheros)} ${pluralFicheros(fn.ficheros)}`
-    : `${ctx.num(fn.lineas)} ${ctx.t('lines')}`;
-  let texto = `${ctx.num(fn[metrica])} ${unidadDe(metrica, fn[metrica])} (${partes.join(' · ')}) · ${otro}`;
-  if (fn.casos != null) texto += ` · ${ctx.t('map.cases', { n: ctx.num(fn.casos) })}`;
-  return texto;
-}
-function tooltipDe(entrada) {
-  if (entrada.tipo === 'app') {
-    const app = entrada.pieza.app;
-    const valor = valorDe(app, estado.metrica);
-    const n = app.funciones.length;
-    const detalle = `${ctx.num(valor)} ${unidadDe(estado.metrica, valor)} (${pctTexto(porcentaje(valor, modelo.totales[estado.metrica]))} ${ctx.t('map.ofTotal')}) · ${ctx.t(n === 1 ? 'map.fnCount.one' : 'map.fnCount', { n: ctx.num(n) })}`;
-    return { etiqueta: app.etiqueta, detalle };
-  }
-  const f = entrada.pieza;
-  return {
-    etiqueta: `${entrada.app.etiqueta} · ${etiquetaFn(entrada.app.clave, f.fn.clave)}`,
-    detalle: detalleFn(entrada.app, f.fn),
-  };
-}
+const ordenadas = (app) => [...app.funciones].sort((a, b) => b[metrica] - a[metrica]);
 
-// --- Construcción del DOM ----------------------------------------------------------
+// --- Construcción -------------------------------------------------------------------
 function construir() {
-  porElemento.clear();
-  piezas = [];
-  UI.mapa.replaceChildren();
-  for (const app of modelo.apps) {
-    const pt = crearPieza(app);
-    piezas.push(pt);
-    UI.mapa.append(pt.bloque, pt.cabeza);
-    for (const f of pt.funciones) UI.mapa.append(f.el);
-  }
-  for (const pt of piezas) actualizarPieza(pt);
-  calcular();
-  ajustarTexto();
-}
+  UI.lista.replaceChildren();
+  filas = modelo.apps.map((app) => {
+    const li = el('li', `cm-app app-${app.clave}`);
+    const idFns = `cm-fns-${app.clave}`;
+    const boton = el('button', 'cm-row');
+    boton.type = 'button';
+    boton.setAttribute('aria-controls', idFns);
+    const cab = el('span', 'cm-cab');
+    const punto = el('span', 'cm-dot');
+    punto.setAttribute('aria-hidden', 'true');
+    const nombre = el('span', 'cm-name');
+    const pista = el('span', 'cm-hint');
+    const textos = el('span', 'cm-textos');
+    textos.append(nombre, pista);
+    const valor = el('b', 'cm-val');
+    const uni = el('span', 'cm-uni');
+    const pct = el('span', 'cm-pct');
+    const figs = el('span', 'cm-figs');
+    figs.append(valor, uni, pct);
+    cab.append(punto, textos, figs);
+    const pista2 = el('span', 'cm-chev');
+    pista2.setAttribute('aria-hidden', 'true');
+    cab.append(pista2);
+    const pista3 = el('span', 'cm-track');
+    pista3.setAttribute('aria-hidden', 'true');
+    const relleno = el('span', 'cm-fill');
+    pista3.append(relleno);
+    boton.append(cab, pista3);
 
-function crearPieza(app) {
-  const claseApp = `app-${app.clave}`;
-  const bloque = el('div', `tm-app ${claseApp}`);
-  bloque.dataset.app = app.clave;
-  bloque.setAttribute('aria-hidden', 'true');
+    const panel = el('div', 'cm-fns');
+    panel.id = idFns;
+    const lista = el('ul', 'cm-fn-list');
+    panel.append(lista);
+    panel.hidden = !abiertas.has(app.clave);
+    boton.setAttribute('aria-expanded', String(abiertas.has(app.clave)));
+    li.classList.toggle('abierta', abiertas.has(app.clave));
+    boton.addEventListener('click', () => alternar(app.clave));
 
-  const cabeza = document.createElement('button');
-  cabeza.type = 'button';
-  cabeza.className = `tm-head ${claseApp}`;
-  cabeza.dataset.app = app.clave;
-  const nombreCab = el('span', 'tm-name');
-  const figsCab = el('span', 'tm-figs');
-  const valCab = el('b', 'tm-val');
-  const sepCab = el('span', 'tm-sep', ' · ');
-  const pctCab = el('span', 'tm-pct');
-  figsCab.append(valCab, sepCab, pctCab);
-  // El espacio entre nombre y cifras no se ve (cabeza flex), pero forma parte
-  // del texto del elemento: así el nombre accesible puede empezar por él.
-  cabeza.append(nombreCab, document.createTextNode(' '), figsCab);
-
-  const pt = {
-    app, bloque, cabeza, nombreCab, figsCab, valCab, sepCab, pctCab, funciones: [],
-  };
-  porElemento.set(bloque, { tipo: 'app', pieza: pt });
-  porElemento.set(cabeza, { tipo: 'app', pieza: pt });
-
-  app.funciones.forEach((fn, i) => {
-    const tile = el('div', `tm-tile ${claseApp}`);
-    tile.dataset.app = app.clave;
-    tile.tabIndex = 0;
-    tile.setAttribute('role', 'img');
-    tile.classList.add(`n${Math.min(i + 1, TONOS.length)}`);
-    const dentro = el('div', 'tm-in');
-    const caja = el('div', 'tm-caja');
-    const nombre = el('span', 'tm-name');
-    const figs = el('span', 'tm-figs');
-    const val = el('b', 'tm-val');
-    const sep = el('span', 'tm-sep', '·');
-    const pct = el('span', 'tm-pct');
-    figs.append(val, sep, pct);
-    caja.append(nombre, figs);
-    dentro.append(caja);
-    tile.append(dentro);
-    const f = { el: tile, entrada: dentro, nombre, figs, val, sep, pct, fn };
-    pt.funciones.push(f);
-    porElemento.set(tile, { tipo: 'fn', pieza: f, app });
+    li.append(boton, panel);
+    UI.lista.append(li);
+    return { app, li, boton, nombre, pista, valor, uni, pct, relleno, panel, lista };
   });
-  return pt;
 }
 
-function actualizarPieza(pt) {
-  const app = pt.app;
-  const valor = valorDe(app, estado.metrica);
-  pt.nombreCab.textContent = app.etiqueta;
-  pt.valCab.textContent = ctx.num(valor);
-  pt.pctCab.textContent = pctTexto(porcentaje(valor, modelo.totales[estado.metrica]));
-  // El nombre accesible empieza por el texto visible, con sus mismos separadores.
-  const visible = `${pt.nombreCab.textContent} ${pt.valCab.textContent} · ${pt.pctCab.textContent}`;
-  const claveAria = app.funciones.length === 1 ? 'map.aria.app.one' : 'map.aria.app';
-  pt.cabeza.setAttribute('aria-label', `${visible}. ${ctx.t(claveAria, {
-    n: ctx.num(app.funciones.length),
-    unidad: unidadDe(estado.metrica, valor),
-  })}`);
-  for (const f of pt.funciones) {
-    const v = valorDe(f.fn, estado.metrica);
-    const totalNivel = estado.nivel === 'app' ? app[estado.metrica] : modelo.totales[estado.metrica];
-    f.nombre.textContent = etiquetaFn(app.clave, f.fn.clave);
-    f.val.textContent = ctx.num(v);
-    f.pct.textContent = pctTexto(porcentaje(v, totalNivel));
-    f.el.setAttribute('aria-label', ctx.t('map.aria.fn', {
-      app: app.etiqueta,
-      fn: etiquetaFn(app.clave, f.fn.clave),
-      detalle: detalleFn(app, f.fn),
+function actualizar() {
+  const total = modelo.totales[metrica];
+  const maximo = Math.max(...modelo.apps.map((a) => a[metrica]), 1);
+  UI.total.replaceChildren(
+    el('b', 'cm-total-num', ctx.num(total)),
+    el('span', null, ctx.t('map.total', { unidad: unidad(total), n: ctx.num(modelo.apps.length) })),
+  );
+  // Las aplicaciones se ordenan de mayor a menor con la métrica elegida.
+  const orden = [...filas].sort((a, b) => b.app[metrica] - a.app[metrica]);
+  for (const f of orden) UI.lista.append(f.li);
+  for (const f of filas) {
+    const app = f.app;
+    const v = app[metrica];
+    const n = app.funciones.length;
+    f.nombre.textContent = etiquetaApp(app);
+    f.pista.textContent = ctx.t(n === 1 ? 'map.fnCount.one' : 'map.fnCount', { n: ctx.num(n) });
+    f.valor.textContent = ctx.num(v);
+    f.uni.textContent = unidad(v);
+    f.pct.textContent = pctTexto(porcentaje(v, total));
+    f.boton.setAttribute('aria-label', ctx.t('map.aria.app', {
+      app: etiquetaApp(app), v: ctx.num(v), unidad: unidad(v),
+      pct: pctTexto(porcentaje(v, total)), n: ctx.num(n),
     }));
-  }
-}
-
-// --- Reparto de áreas y estado ------------------------------------------------------
-function calcular() {
-  const w = UI.mapa.clientWidth, h = UI.mapa.clientHeight;
-  if (!w || !h) return;
-  ultimoTam = { w, h };
-  const todo = estado.nivel === 'todo';
-  const rects = squarify(modelo.apps.map((a) => ({ id: a.clave, valor: valorDe(a, estado.metrica) })), 0, 0, w, h);
-  for (const pt of piezas) {
-    const r = todo ? rects.get(pt.app.clave) : (pt.app.clave === estado.app ? { x: 0, y: 0, w, h } : null);
-    const visible = !!r && r.w >= 1 && r.h >= 1;
-    marcarOculto(pt, !visible);
-    pt.cabeza.disabled = !todo;
-    pt.cabeza.setAttribute('aria-expanded', String(!todo && pt.app.clave === estado.app));
-    if (!visible) continue;
-    const bloque = inset(r, HUECO / 2);
-    aplicar(pt.bloque, bloque);
-    aplicar(pt.cabeza, {
-      x: bloque.x + 6,
-      y: bloque.y + 2,
-      w: Math.max(0, bloque.w - 12),
-      h: Math.max(0, ALTO_CABECERA - 4),
+    f.relleno.style.setProperty('--w', `${porcentaje(v, maximo)}%`);
+    f.relleno.replaceChildren();
+    const fns = ordenadas(app);
+    fns.forEach((fn, i) => {
+      if (!fn[metrica]) return;
+      const seg = el('span', `cm-seg n${Math.min(i + 1, TONOS)}`);
+      seg.style.flexGrow = String(fn[metrica]);
+      seg.dataset.tip = `${etiquetaApp(app)} · ${etiquetaFn(app.clave, fn.clave)}`;
+      seg.dataset.tipValor = `${ctx.num(fn[metrica])} ${unidad(fn[metrica])} · ${pctTexto(porcentaje(fn[metrica], v))} ${ctx.t('map.ofApp')}`;
+      f.relleno.append(seg);
     });
-    const zona = {
-      x: bloque.x + MARCO,
-      y: bloque.y + ALTO_CABECERA,
-      w: Math.max(0, bloque.w - MARCO * 2),
-      h: Math.max(0, bloque.h - ALTO_CABECERA - MARCO),
-    };
-    const orden = pt.funciones
-      .map((_, i) => i)
-      .sort((a, b) => valorDe(pt.app.funciones[b], estado.metrica) - valorDe(pt.app.funciones[a], estado.metrica));
-    const tonoDe = new Map(orden.map((i, pos) => [i, Math.min(pos, TONOS.length - 1)]));
-    const rectsFn = squarify(
-      pt.funciones.map((f, i) => ({ id: i, valor: valorDe(f.fn, estado.metrica) })),
-      zona.x, zona.y, zona.w, zona.h,
-    );
-    pt.funciones.forEach((f, i) => {
-      const rf = rectsFn.get(i);
-      marcarOcultoTile(f, !rf || rf.w < 1 || rf.h < 1);
-      if (!rf || rf.w < 1 || rf.h < 1) { aplicar(f.el, { x: zona.x, y: zona.y, w: 0, h: 0 }); return; }
-      const tono = tonoDe.get(i) ?? 0;
-      for (let k = 1; k <= TONOS.length; k++) f.el.classList.toggle(`n${k}`, k === tono + 1);
-      aplicar(f.el, inset(rf, HUECO / 2));
-    });
+    pintarFunciones(f, fns);
   }
-}
-function aplicar(e, r) {
-  e.style.left = `${r.x}px`;
-  e.style.top = `${r.y}px`;
-  e.style.width = `${r.w}px`;
-  e.style.height = `${r.h}px`;
-}
-function marcarOculto(pt, ocultar) {
-  pt.bloque.classList.toggle('tm-oculto', ocultar);
-  pt.cabeza.classList.toggle('tm-oculto', ocultar);
-  for (const f of pt.funciones) marcarOcultoTile(f, ocultar);
-}
-function marcarOcultoTile(f, ocultar) {
-  f.el.classList.toggle('tm-oculto', ocultar);
-  f.el.tabIndex = ocultar ? -1 : 0;
 }
 
-// --- Ajuste del texto a cada rectángulo ---------------------------------------------
-function programarAjuste(animar) {
-  clearTimeout(ajusteId);
-  const ms = animar && !reducido() ? DURACION + 90 : 40;
-  ajusteId = setTimeout(ajustarTexto, ms);
-}
-function ajustarTexto() {
-  if (!modelo) return;
-  for (const pt of piezas) {
-    if (pt.bloque.classList.contains('tm-oculto')) continue;
-    const w = pt.cabeza.clientWidth;
-    pt.figsCab.classList.remove('kt-oculto');
-    const anchoNombre = pt.nombreCab.scrollWidth;
-    const anchoFigs = pt.figsCab.scrollWidth;
-    pt.figsCab.classList.toggle('kt-oculto', !w || anchoNombre + anchoFigs + 12 > w);
-    for (const f of pt.funciones) {
-      if (f.el.classList.contains('tm-oculto')) continue;
-      ajustarTile(f);
-    }
-  }
-}
-function ajustarTile(f) {
-  const w = f.entrada.clientWidth, h = f.entrada.clientHeight;
-  if (!w || !h) {
-    f.nombre.classList.add('kt-oculto');
-    f.figs.classList.add('kt-oculto');
-    return;
-  }
-  f.nombre.classList.remove('kt-oculto');
-  f.figs.classList.remove('kt-oculto');
-  f.pct.classList.remove('kt-oculto');
-  f.sep.classList.remove('kt-oculto');
-  // El nombre manda: hasta dos líneas con elipsis en la segunda. Se mide sin
-  // límite para saber si cabe completo.
-  const altoLinea = parseFloat(getComputedStyle(f.nombre).lineHeight) || 15;
-  f.nombre.classList.add('kt-sin-clamp');
-  const altoNombre = f.nombre.getBoundingClientRect().height;
-  f.nombre.classList.remove('kt-sin-clamp');
-  const anchoOk = f.nombre.scrollWidth <= w + 1;
-  const nombreCompleto = anchoOk && altoNombre <= altoLinea * 2 + 0.5;
-  const hayNombre = anchoOk && h >= altoLinea;
-  // La cifra solo se pinta si el nombre ya cabe completo y hay sitio.
-  const altoFigs = f.figs.getBoundingClientRect().height;
-  const cabeVal = f.val.getBoundingClientRect().width <= w;
-  const cabeTodo = f.figs.scrollWidth <= w;
-  const verFigs = nombreCompleto && cabeVal && h >= altoNombre + 2 + altoFigs;
-  const verPct = verFigs && cabeTodo;
-  f.figs.classList.toggle('kt-oculto', !verFigs);
-  f.pct.classList.toggle('kt-oculto', !verPct);
-  f.sep.classList.toggle('kt-oculto', !verPct);
-  f.nombre.classList.toggle('kt-oculto', !hayNombre);
+function pintarFunciones(f, fns) {
+  const app = f.app;
+  const maximo = Math.max(...fns.map((fn) => fn[metrica]), 1);
+  f.lista.replaceChildren();
+  fns.forEach((fn, i) => {
+    const v = fn[metrica];
+    const li = el('li', 'cm-fn');
+    const nombre = el('span', 'cm-fn-name', etiquetaFn(app.clave, fn.clave));
+    const pista = el('span', 'cm-fn-track');
+    pista.setAttribute('aria-hidden', 'true');
+    const barra = el('span', `cm-fn-bar n${Math.min(i + 1, TONOS)}`);
+    barra.style.width = `${porcentaje(v, maximo)}%`;
+    pista.append(barra);
+    const cifras = el('span', 'cm-fn-figs');
+    cifras.append(el('b', null, ctx.num(v)), document.createTextNode(` ${unidad(v)} · ${pctTexto(porcentaje(v, app[metrica]))}`));
+    li.append(nombre, pista, cifras);
+    if (fn.casos != null) li.append(el('span', 'cm-fn-casos', ctx.t('map.cases', { n: ctx.num(fn.casos) })));
+    f.lista.append(li);
+  });
 }
 
-// --- Zoom, migas y estado -----------------------------------------------------------
-function ampliar(clave) {
-  if (!modelo || estado.nivel !== 'todo') return;
-  if (!modelo.apps.some((a) => a.clave === clave)) return;
-  estado.nivel = 'app';
-  estado.app = clave;
-  UI.mapa.classList.add('zoom');
-  pintarMigas();
-  for (const pt of piezas) actualizarPieza(pt);
-  calcular();
-  programarAjuste(true);
-  UI.live.textContent = ctx.t('map.live.zoom', { app: etiquetaApp(clave) });
-  const atras = UI.crumbs.querySelector('button');
-  if (atras) atras.focus();
+// --- Interacción --------------------------------------------------------------------
+function alternar(clave) {
+  const f = filas.find((x) => x.app.clave === clave);
+  if (!f) return;
+  const abrir = !abiertas.has(clave);
+  if (abrir) abiertas.add(clave); else abiertas.delete(clave);
+  f.panel.hidden = !abrir;
+  f.li.classList.toggle('abierta', abrir);
+  f.boton.setAttribute('aria-expanded', String(abrir));
+  UI.live.textContent = ctx.t(abrir ? 'map.live.open' : 'map.live.close', { app: etiquetaApp(f.app) });
 }
-function volver() {
-  if (!modelo || estado.nivel === 'todo') return;
-  const clave = estado.app;
-  estado.nivel = 'todo';
-  estado.app = null;
-  UI.mapa.classList.remove('zoom');
-  pintarMigas();
-  for (const pt of piezas) actualizarPieza(pt);
-  calcular();
-  programarAjuste(true);
-  UI.live.textContent = ctx.t('map.live.all');
-  const pt = piezas.find((p) => p.app.clave === clave);
-  if (pt && !pt.cabeza.disabled) pt.cabeza.focus();
-}
-function cambiarMetrica(metrica) {
-  if (!modelo || !['lineas', 'ficheros'].includes(metrica) || metrica === estado.metrica) return;
-  estado.metrica = metrica;
+function cambiarMetrica(nueva) {
+  if (!modelo || !['lineas', 'ficheros'].includes(nueva) || nueva === metrica) return;
+  metrica = nueva;
   for (const b of UI.botones) b.setAttribute('aria-pressed', String(b.dataset.metric === metrica));
-  for (const pt of piezas) actualizarPieza(pt);
-  calcular();
-  programarAjuste(true);
-}
-function pintarMigas() {
-  UI.crumbs.replaceChildren();
-  if (estado.nivel === 'todo') {
-    const actual = el('span', 'crumb-actual', ctx.t('map.todo'));
-    actual.setAttribute('aria-current', 'true');
-    UI.crumbs.append(actual);
-    UI.esc.hidden = true;
-  } else {
-    const atras = el('button', 'crumb-btn', ctx.t('map.todo'));
-    atras.type = 'button';
-    atras.addEventListener('click', volver);
-    const sep = el('span', 'crumb-sep', '›');
-    sep.setAttribute('aria-hidden', 'true');
-    const actual = el('span', 'crumb-actual', etiquetaApp(estado.app));
-    actual.setAttribute('aria-current', 'true');
-    UI.crumbs.append(atras, sep, actual);
-    UI.esc.hidden = false;
-  }
+  actualizar();
 }
 
-// --- Piezas estáticas de la tarjeta (selector, lenguajes, documentación, tabla) ------
-function textosEstaticos() {
-  UI.crumbs.setAttribute('aria-label', ctx.t('map.crumbs.aria'));
-  UI.metricas.setAttribute('aria-label', ctx.t('map.metrics.aria'));
-  UI.mapa.setAttribute('role', 'group');
-  UI.mapa.setAttribute('aria-label', ctx.t('chart.code.title'));
-  for (const b of UI.botones) b.setAttribute('aria-pressed', String(b.dataset.metric === estado.metrica));
-}
-function pintarExtras() {
-  pintarLenguajes();
-  pintarDocs();
-  UI.meta.hidden = UI.langs.hidden && UI.docs.hidden;
-  pintarTabla();
-}
+// --- Piezas estáticas de la tarjeta (lenguajes, documentación, tabla) --------------
 function pintarLenguajes() {
   UI.langbar.replaceChildren();
   UI.legendaLangs.replaceChildren();
@@ -594,19 +314,15 @@ function pintarTabla() {
   tabla.append(el('caption', 'sr-only', ctx.t('map.table.caption')));
   const thead = el('thead');
   const trh = el('tr');
-  const th0 = el('th', null, ctx.t('map.table.appfn'));
-  th0.setAttribute('scope', 'col');
-  const th1 = el('th', 'num', ctx.t('map.table.files'));
-  th1.setAttribute('scope', 'col');
-  const th2 = el('th', 'num', ctx.t('map.table.lines'));
-  th2.setAttribute('scope', 'col');
-  const th3 = el('th', 'num', ctx.t('map.table.pct'));
-  th3.setAttribute('scope', 'col');
-  trh.append(th0, th1, th2, th3);
+  for (const [clave, clase] of [['map.table.appfn', null], ['map.table.files', 'num'], ['map.table.lines', 'num'], ['map.table.pct', 'num']]) {
+    const th = el('th', clase, ctx.t(clave));
+    th.setAttribute('scope', 'col');
+    trh.append(th);
+  }
   thead.append(trh);
   const tbody = el('tbody');
   const totalLineas = modelo.totales.lineas || 1;
-  const filaResumen = (clase, etiqueta, ficheros, lineas) => {
+  const fila = (clase, etiqueta, ficheros, lineas) => {
     const tr = el('tr', clase);
     const th = el('th', null, etiqueta);
     th.setAttribute('scope', 'row');
@@ -615,12 +331,12 @@ function pintarTabla() {
     return tr;
   };
   for (const app of modelo.apps) {
-    tbody.append(filaResumen('aplicacion', app.etiqueta, app.ficheros, app.lineas));
+    tbody.append(fila('aplicacion', etiquetaApp(app), app.ficheros, app.lineas));
     for (const fn of app.funciones) {
-      tbody.append(filaResumen('funcion', etiquetaFn(app.clave, fn.clave), fn.ficheros, fn.lineas));
+      tbody.append(fila('funcion', etiquetaFn(app.clave, fn.clave), fn.ficheros, fn.lineas));
     }
   }
-  tbody.append(filaResumen('total', ctx.t('map.table.total'), modelo.totales.ficheros, modelo.totales.lineas));
+  tbody.append(fila('total', ctx.t('map.table.total'), modelo.totales.ficheros, modelo.totales.lineas));
   tabla.append(thead, tbody);
   UI.tabla.append(tabla);
 }
