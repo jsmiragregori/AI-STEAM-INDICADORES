@@ -193,7 +193,7 @@ export const TEXTOS = {
     'm.3': 'Las líneas de código son líneas no vacías de los ficheros bajo control de versiones. No se cuentan las bibliotecas de terceros ni los datos generados como código.',
     'm.4': 'Cada área del mapa del código es una función: un conjunto de piezas de código con la misma finalidad (por ejemplo, las vistas de sección o la entrega y el despliegue), no una carpeta ni un tipo de fichero.',
     'm.5': 'Los casos de prueba son las pruebas automáticas declaradas en el código del proyecto; el anillo de pruebas los agrupa por la función que cubren.',
-    'm.6': 'Un «cambio registrado» es una confirmación (commit) en el historial de versiones, sin contar las fusiones. Las semanas del pulso van de lunes a domingo (semana ISO) y nunca se fusionan; la semana en curso queda fuera de la media y del récord.',
+    'm.6': 'Un «cambio registrado» es una confirmación (commit) en el historial de versiones, sin contar las fusiones. El pulso agrupa los cambios por semanas de lunes a domingo (semana ISO); la semana en curso queda fuera de la media y del récord.',
     'm.7': 'El crecimiento es una foto al cierre de cada mes: las líneas y los casos de prueba tal como estaban en el último cambio de cada repositorio dentro del mes; el mes en curso, a la fecha de los datos.',
 
     'footer.left': 'AI-STEAM Network · Panel de indicadores del proyecto',
@@ -395,7 +395,7 @@ export const TEXTOS = {
     'm.3': 'Lines of code are non-empty lines in version-controlled files. Third-party libraries and generated data are not counted as code.',
     'm.4': 'Each area of the code map is a function: a set of code pieces with the same purpose (for example, section views or delivery and deployment), not a folder or a file type.',
     'm.5': 'Test cases are the automated tests declared in the project code; the test ring groups them by the function they cover.',
-    'm.6': 'A “recorded change” is a commit in the version history, excluding merges. The weeks of the pulse run from Monday to Sunday (ISO week) and are never merged; the current week is left out of the average and the record.',
+    'm.6': 'A “recorded change” is a commit in the version history, excluding merges. The pulse groups changes into Monday-to-Sunday weeks (ISO weeks); the current week is left out of the average and the record.',
     'm.7': 'Growth is a snapshot at the end of each month: lines and test cases as they stood in the latest change of each repository within the month; the current month, as of the data date.',
 
     'footer.left': 'AI-STEAM Network · Project indicators panel',

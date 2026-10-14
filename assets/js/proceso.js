@@ -235,20 +235,6 @@ function dibujar(g) {
     rotulo.textContent = tick.texto;
     plot.append(rotulo);
   }
-  // Semana en curso: trama diagonal sobre su banda, delimitada por una guía.
-  if (g.enCurso && n >= 2) {
-    const pid = `pp-hatch-${g.id}`;
-    const defs = svgEl('defs');
-    const patron = svgEl('pattern', 'pp-hatch-pat', {
-      id: pid, width: 7, height: 7, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)',
-    });
-    patron.append(svgEl('line', 'pp-hatch-line', { x1: 0, y1: 0, x2: 0, y2: 7 }));
-    defs.append(patron);
-    const inicio = (g.x[n - 2] + g.x[n - 1]) / 2;
-    plot.append(defs, svgEl('rect', 'pp-hatch', {
-      x: inicio, y: m.top, width: Math.max(0, W - m.right - inicio), height: ph, fill: `url(#${pid})`,
-    }), svgEl('line', 'pp-hatch-guia', { x1: inicio, y1: m.top, x2: inicio, y2: m.top + ph }));
-  }
   // Áreas apiladas, en el orden de las series.
   for (let k = 0; k < g.opciones.series.length; k++) {
     const arriba = acum[k];
@@ -257,6 +243,33 @@ function dibujar(g) {
     for (let i = 0; i < n; i++) d.push(`${i ? 'L' : 'M'}${g.x[i].toFixed(1)},${y(arriba[i]).toFixed(1)}`);
     for (let i = n - 1; i >= 0; i--) d.push(`L${g.x[i].toFixed(1)},${y(abajo[i]).toFixed(1)}`);
     plot.append(svgEl('path', `pp-area ${g.opciones.series[k].clase}`, { d: d.join('') + 'Z' }));
+  }
+  // Semana en curso: el último tramo de cada área se cubre con la trama
+  // (encima del relleno, no debajo), el borde superior del tramo pasa a
+  // discontinuo y la guía vertical queda por encima de las áreas.
+  if (g.enCurso && n >= 2) {
+    const pid = `pp-hatch-${g.id}`;
+    const defs = svgEl('defs');
+    const patron = svgEl('pattern', 'pp-hatch-pat', {
+      id: pid, width: 7, height: 7, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)',
+    });
+    patron.append(svgEl('line', 'pp-hatch-line', { x1: 0, y1: 0, x2: 0, y2: 7 }));
+    defs.append(patron);
+    const i0 = n - 2;
+    const i1 = n - 1;
+    for (let k = 0; k < g.opciones.series.length; k++) {
+      const arriba = g.acum[k];
+      const abajo = k ? g.acum[k - 1] : new Array(n).fill(0);
+      const d = `M${g.x[i0].toFixed(1)},${y(abajo[i0]).toFixed(1)}`
+        + `L${g.x[i0].toFixed(1)},${y(arriba[i0]).toFixed(1)}`
+        + `L${g.x[i1].toFixed(1)},${y(arriba[i1]).toFixed(1)}`
+        + `L${g.x[i1].toFixed(1)},${y(abajo[i1]).toFixed(1)}Z`;
+      plot.append(svgEl('path', 'pp-trama', { d, fill: `url(#${pid})` }));
+    }
+    const alto = g.acum[g.acum.length - 1];
+    plot.append(defs, svgEl('line', 'pp-tramo-borde', {
+      x1: g.x[i0], y1: y(alto[i0]), x2: g.x[i1], y2: y(alto[i1]),
+    }), svgEl('line', 'pp-hatch-guia', { x1: g.x[i0], y1: m.top, x2: g.x[i0], y2: m.top + ph }));
   }
   // Cruz de lectura.
   const cruz = svgEl('g', 'pp-cruz');
