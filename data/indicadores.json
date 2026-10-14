@@ -26,11 +26,11 @@
       },
       "tests": {
         "ficheros": 321,
-        "lineas": 62740
+        "lineas": 62760
       },
       "tooling": {
         "ficheros": 98,
-        "lineas": 33082
+        "lineas": 33084
       },
       "site": {
         "ficheros": 31,
@@ -133,7 +133,7 @@
         {
           "clave": "calidad",
           "ficheros": 5,
-          "lineas": 1021
+          "lineas": 1023
         },
         {
           "clave": "proteccion",
@@ -144,21 +144,21 @@
       "tests": [
         {
           "clave": "proteccion",
-          "ficheros": 167,
-          "lineas": 27160,
-          "casos": 1749
+          "ficheros": 159,
+          "lineas": 25681,
+          "casos": 1667
         },
         {
           "clave": "panel",
-          "ficheros": 52,
-          "lineas": 14954,
-          "casos": 1012
+          "ficheros": 57,
+          "lineas": 15747,
+          "casos": 1051
         },
         {
           "clave": "publicacion",
-          "ficheros": 33,
-          "lineas": 6882,
-          "casos": 488
+          "ficheros": 34,
+          "lineas": 7295,
+          "casos": 509
         },
         {
           "clave": "sitio",
@@ -168,9 +168,9 @@
         },
         {
           "clave": "entrega",
-          "ficheros": 25,
-          "lineas": 6374,
-          "casos": 420
+          "ficheros": 27,
+          "lineas": 6647,
+          "casos": 442
         },
         {
           "clave": "contenido",
@@ -181,23 +181,23 @@
         {
           "clave": "otros",
           "ficheros": 4,
-          "lineas": 320,
-          "casos": 14
+          "lineas": 340,
+          "casos": 15
         }
       ]
     },
     "lenguajes": {
       "Python": 94615,
-      "JavaScript": 35183,
+      "JavaScript": 35205,
       "CSS": 750,
       "HTML": 27
     },
-    "casosDePrueba": 4032
+    "casosDePrueba": 4033
   },
   "proceso": {
     "inicio": "2026-05",
     "meses": 6,
-    "commits": 2823,
+    "commits": 2824,
     "actividad": [
       {
         "mes": "2026-05",
@@ -231,7 +231,7 @@
       },
       {
         "mes": "2026-10",
-        "content": 756,
+        "content": 757,
         "vanilla": 80,
         "diagrams": 0
       }
@@ -377,7 +377,7 @@
       },
       {
         "semana": "2026-10-12",
-        "content": 159,
+        "content": 160,
         "vanilla": 24,
         "diagrams": 0
       }
@@ -433,9 +433,9 @@
         "site": 9134,
         "panel": 25619,
         "publicacion": 9506,
-        "herramientas": 23576,
-        "tests": 62740,
-        "casos": 4032
+        "herramientas": 23578,
+        "tests": 62760,
+        "casos": 4033
       }
     ],
     "sesionesDocumentadas": 468,
