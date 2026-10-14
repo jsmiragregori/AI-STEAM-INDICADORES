@@ -34,11 +34,11 @@
   --shadow: 0 10px 30px -12px rgb(86 32 246 / .08);
   --card-grad: linear-gradient(to bottom, #FFFFFF 0%, #FFF4E1 100%);
   --hero: linear-gradient(135deg, #4918AD 0%, #521DE2 55%, #5620F6 100%);
-  --map-site: #0369A1;
+  --map-site: #1D4ED8;
   --map-panel: #5620F6;
-  --map-publicacion: #B45309;
-  --map-herramientas: #BE123C;
-  --map-tests: #047857;
+  --map-publicacion: #0F766E;
+  --map-herramientas: #C2410C;
+  --map-tests: #1E1B4B;
   --map-ink: #FFFFFF;
   --lang-py: #4C1D95;
   --lang-js: #7C3AED;
@@ -66,11 +66,11 @@
     --grid: rgb(238 235 255 / .08);
     --shadow: 0 10px 30px -12px rgb(0 0 0 / .5);
     --card-grad: linear-gradient(to bottom, #1A1633 0%, #221C3F 100%);
-    --map-site: #5BC0EB;
-    --map-panel: #9C80FF;
-    --map-publicacion: #E8A33D;
-    --map-herramientas: #F07CA4;
-    --map-tests: #45C89B;
+    --map-site: #7DA9FF;
+    --map-panel: #A78BFF;
+    --map-publicacion: #3FC6BC;
+    --map-herramientas: #FF9D5C;
+    --map-tests: #A8A3CB;
     --map-ink: #14112B;
     --lang-py: #C4B5FD;
     --lang-js: #A78BFA;
@@ -95,11 +95,11 @@
   --grid: rgb(238 235 255 / .08);
   --shadow: 0 10px 30px -12px rgb(0 0 0 / .5);
   --card-grad: linear-gradient(to bottom, #1A1633 0%, #221C3F 100%);
-  --map-site: #5BC0EB;
-  --map-panel: #9C80FF;
-  --map-publicacion: #E8A33D;
-  --map-herramientas: #F07CA4;
-  --map-tests: #45C89B;
+  --map-site: #7DA9FF;
+  --map-panel: #A78BFF;
+  --map-publicacion: #3FC6BC;
+  --map-herramientas: #FF9D5C;
+  --map-tests: #A8A3CB;
   --map-ink: #14112B;
   --lang-py: #C4B5FD;
   --lang-js: #A78BFA;
@@ -306,24 +306,31 @@ section.block { padding: 5.5rem 0 1rem; }
 .tm-head .tm-figs { flex: none; font-weight: 600; font-size: .76rem; white-space: nowrap; }
 .tm-head:focus-visible { outline: 3px solid var(--map-ink); outline-offset: -3px; }
 
-.tm-tile { border-radius: 8px; overflow: hidden; color: var(--text); }
-.tm-tile.n1 { background: color-mix(in srgb, var(--c) 50%, var(--surface)); }
-.tm-tile.n2 { background: color-mix(in srgb, var(--c) 40%, var(--surface)); }
-.tm-tile.n3 { background: color-mix(in srgb, var(--c) 32%, var(--surface)); }
-.tm-tile.n4 { background: color-mix(in srgb, var(--c) 26%, var(--surface)); }
-.tm-tile.n5 { background: color-mix(in srgb, var(--c) 20%, var(--surface)); }
-.tm-tile.n6 { background: color-mix(in srgb, var(--c) 15%, var(--surface)); }
-.tm-tile.n7 { background: color-mix(in srgb, var(--c) 11%, var(--surface)); }
+.tm-tile { border-radius: 8px; overflow: hidden; color: var(--text); --tinte: var(--surface); }
+.tm-tile.app-tests { --tinte: var(--beige); }
+.tm-tile.n1 { background: color-mix(in srgb, var(--c) 50%, var(--tinte)); }
+.tm-tile.n2 { background: color-mix(in srgb, var(--c) 40%, var(--tinte)); }
+.tm-tile.n3 { background: color-mix(in srgb, var(--c) 32%, var(--tinte)); }
+.tm-tile.n4 { background: color-mix(in srgb, var(--c) 26%, var(--tinte)); }
+.tm-tile.n5 { background: color-mix(in srgb, var(--c) 20%, var(--tinte)); }
+.tm-tile.n6 { background: color-mix(in srgb, var(--c) 15%, var(--tinte)); }
+.tm-tile.n7 { background: color-mix(in srgb, var(--c) 11%, var(--tinte)); }
 .tm-tile:focus-visible { outline: 3px solid var(--text); outline-offset: -3px; }
 .map:not(.zoom) .tm-tile { cursor: pointer; }
 .map:not(.zoom) .tm-tile:hover, .tm-tile:focus-visible { filter: brightness(1.05); }
 
 .tm-in {
   position: absolute; inset: 6px 8px; display: flex; flex-direction: column;
-  justify-content: center; gap: 2px; overflow: hidden; pointer-events: none;
+  justify-content: center; overflow: hidden; pointer-events: none;
 }
-.tm-tile .tm-name { font-size: .78rem; font-weight: 600; line-height: 1.15; white-space: nowrap; overflow: hidden; }
-.tm-tile .tm-figs { display: block; font-size: .73rem; line-height: 1.2; white-space: nowrap; overflow: hidden; }
+.tm-caja { width: 100%; }
+.tm-tile .tm-name {
+  font-size: .78rem; font-weight: 600; line-height: 1.15;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.tm-tile .tm-name.kt-sin-clamp { -webkit-line-clamp: none; }
+.tm-tile .tm-figs { display: block; font-size: .73rem; line-height: 1.2; white-space: nowrap; overflow: hidden; margin-top: 2px; }
 .tm-val { font-weight: 700; font-variant-numeric: tabular-nums; }
 .tm-pct { font-weight: 500; }
 .tm-sep { margin: 0 .3rem; }

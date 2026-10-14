@@ -318,13 +318,15 @@ function crearPieza(app) {
     tile.tabIndex = 0;
     tile.classList.add(`n${Math.min(i + 1, TONOS.length)}`);
     const dentro = el('div', 'tm-in');
+    const caja = el('div', 'tm-caja');
     const nombre = el('span', 'tm-name');
     const figs = el('span', 'tm-figs');
     const val = el('b', 'tm-val');
     const sep = el('span', 'tm-sep', '·');
     const pct = el('span', 'tm-pct');
     figs.append(val, sep, pct);
-    dentro.append(nombre, figs);
+    caja.append(nombre, figs);
+    dentro.append(caja);
     tile.append(dentro);
     const f = { el: tile, entrada: dentro, nombre, figs, val, sep, pct, fn };
     pt.funciones.push(f);
@@ -454,17 +456,25 @@ function ajustarTile(f) {
   f.figs.classList.remove('kt-oculto');
   f.pct.classList.remove('kt-oculto');
   f.sep.classList.remove('kt-oculto');
-  const cabeNombre = f.nombre.scrollWidth <= w;
+  // El nombre manda: hasta dos líneas con elipsis en la segunda. Se mide sin
+  // límite para saber si cabe completo.
+  const altoLinea = parseFloat(getComputedStyle(f.nombre).lineHeight) || 15;
+  f.nombre.classList.add('kt-sin-clamp');
+  const altoNombre = f.nombre.getBoundingClientRect().height;
+  f.nombre.classList.remove('kt-sin-clamp');
+  const anchoOk = f.nombre.scrollWidth <= w + 1;
+  const nombreCompleto = anchoOk && altoNombre <= altoLinea * 2 + 0.5;
+  const hayNombre = anchoOk && h >= altoLinea;
+  // La cifra solo se pinta si el nombre ya cabe completo y hay sitio.
+  const altoFigs = f.figs.getBoundingClientRect().height;
   const cabeVal = f.val.getBoundingClientRect().width <= w;
   const cabeTodo = f.figs.scrollWidth <= w;
-  const dosLineas = h >= 36;
-  const unaLinea = h >= 16;
-  const verFigs = dosLineas && cabeVal;
+  const verFigs = nombreCompleto && cabeVal && h >= altoNombre + 2 + altoFigs;
   const verPct = verFigs && cabeTodo;
   f.figs.classList.toggle('kt-oculto', !verFigs);
   f.pct.classList.toggle('kt-oculto', !verPct);
   f.sep.classList.toggle('kt-oculto', !verPct);
-  f.nombre.classList.toggle('kt-oculto', !(cabeNombre && (verFigs || unaLinea)));
+  f.nombre.classList.toggle('kt-oculto', !hayNombre);
 }
 
 // --- Zoom, migas y estado -----------------------------------------------------------
