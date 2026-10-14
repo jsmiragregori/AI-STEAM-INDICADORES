@@ -4,6 +4,7 @@
 // Todo se inserta con textContent: ninguna cadena se interpreta como HTML.
 
 import { TEXTOS } from './textos.js';
+import { pintarMapa } from './mapa.js';
 
 const IDIOMAS = ['es', 'en'];
 const CLAVE_IDIOMA = 'indicadores-idioma';
@@ -61,8 +62,6 @@ function variables(d, calc) {
     loaders: num(d.plataforma.cargadores),
     libs: num(d.plataforma.bibliotecasAutoalojadas),
     ratio: num(calc.ratioPruebas, 2),
-    py: num(d.codigo.lenguajes.Python || 0),
-    js: num(d.codigo.lenguajes.JavaScript || 0),
     inicio: mes(d.proceso.inicio, true),
   };
 }
@@ -80,6 +79,11 @@ function mostrarTip(ev, etiqueta, valor) {
   tip.classList.add('on');
 }
 const ocultarTip = () => tip.classList.remove('on');
+/** Muestra la ficha en el borde del elemento (uso con teclado). */
+function mostrarTipEn(e, etiqueta, valor) {
+  const r = e.getBoundingClientRect();
+  mostrarTip({ clientX: r.left + r.width / 2, clientY: r.top + 10 }, etiqueta, valor);
+}
 
 // --- Gráficos (HTML, para que se adapten a cualquier ancho) ----------------------
 function el(tag, clase, texto) {
@@ -106,28 +110,6 @@ function tablaDatos(filas, cabecera) {
   tabla.append(thead, tbody);
   det.append(tabla);
   return det;
-}
-
-/** Barras horizontales: una fila por elemento, valor rotulado al final. */
-function barrasH(contenedor, filas, unidad = '') {
-  const max = Math.max(...filas.map(f => f.valor));
-  const lista = el('div', 'hbars');
-  lista.setAttribute('role', 'list');
-  for (const f of filas) {
-    const fila = el('div', 'hbar-row');
-    fila.setAttribute('role', 'listitem');
-    const valorTexto = num(f.valor) + (unidad ? ` ${unidad}` : '');
-    fila.setAttribute('aria-label', `${f.etiqueta}: ${valorTexto}`);
-    const pista = el('div', 'hbar-track');
-    const barra = el('div', `hbar${f.otro ? ' other' : ''}`);
-    barra.style.width = `${Math.max(0.6, (f.valor / max) * 100)}%`;
-    pista.append(barra);
-    fila.append(el('span', 'hbar-label', f.etiqueta), pista, el('span', 'hbar-value', valorTexto));
-    fila.addEventListener('mousemove', ev => mostrarTip(ev, f.etiqueta, valorTexto));
-    fila.addEventListener('mouseleave', ocultarTip);
-    lista.append(fila);
-  }
-  contenedor.replaceChildren(lista, tablaDatos(filas, t('table.item')));
 }
 
 /** Columnas verticales para una serie temporal corta. */
@@ -179,12 +161,10 @@ function pintar() {
     e.textContent = typeof valor === 'number' ? num(valor) : '–';
   }
 
-  const c = datos.codigo.componentes;
-  const orden = [['site', false], ['panel', false], ['tooling', false], ['tests', false],
-    ['docs', true]];
-  barrasH(document.getElementById('chart-code'),
-    orden.filter(([k]) => c[k]).map(([k, otro]) => ({ etiqueta: t(`comp.${k}`), valor: c[k].lineas, otro })),
-    t('lines'));
+  pintarMapa(datos, {
+    t, num,
+    tip: { mostrar: mostrarTip, mostrarEn: mostrarTipEn, ocultar: ocultarTip },
+  });
 
   columnas(document.getElementById('chart-act'), datos.proceso.actividad.map(a => ({
     etiqueta: mes(a.mes),

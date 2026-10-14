@@ -88,15 +88,38 @@
         <div class="card"><div class="stat" data-n="codigo.componentes.tests.lineas">–</div><h3 data-t="q.tests.t"></h3><p data-t="q.tests.p"></p></div>
         <div class="card"><div class="stat" data-n="codigo.casosDePrueba">–</div><h3 data-t="q.cases.t"></h3><p data-t="q.cases.p"></p></div>
       </div>
-      <div class="card chart-card" style="margin-top:1.25rem">
-        <p class="chart-title" data-t="chart.code.title"></p>
-        <p class="chart-sub" data-t="chart.code.sub"></p>
-        <ul class="legend">
-          <li><span class="swatch" aria-hidden="true"></span><span data-t="legend.code"></span></li>
-          <li><span class="swatch other" aria-hidden="true"></span><span data-t="legend.other"></span></li>
-        </ul>
-        <div class="chart" id="chart-code"></div>
-        <p class="note" data-t="q.langs"></p>
+      <div class="card chart-card map-card" id="card-code" style="margin-top:1.25rem">
+        <div class="map-top">
+          <div>
+            <p class="chart-title" data-t="chart.code.title"></p>
+            <p class="chart-sub" data-t="chart.code.sub"></p>
+          </div>
+          <div class="seg" id="map-metric" role="group">
+            <button type="button" data-metric="lineas" aria-pressed="true" data-t="map.metric.lines"></button>
+            <button type="button" data-metric="ficheros" aria-pressed="false" data-t="map.metric.files"></button>
+          </div>
+        </div>
+        <div id="map-body" hidden>
+          <div class="map-nav">
+            <nav class="crumbs" id="map-crumbs" aria-label=""></nav>
+            <span class="esc-hint" id="map-esc" data-t="map.esc" hidden></span>
+          </div>
+          <div class="map" id="map-code"></div>
+          <p class="sr-only" id="map-live" aria-live="polite"></p>
+          <div class="map-meta" id="map-meta">
+            <div class="map-langs" id="map-langs">
+              <p class="meta-title" data-t="map.langs.title"></p>
+              <div class="langbar" id="langbar" role="img"></div>
+              <ul class="langbar-legend" id="langbar-legend"></ul>
+            </div>
+            <div class="docs-chip" id="docs-chip"></div>
+          </div>
+          <details class="table-view map-table" id="map-details">
+            <summary data-t="map.table.show"></summary>
+            <div class="table-box" id="map-table-box"></div>
+          </details>
+        </div>
+        <p class="map-empty" id="map-empty" hidden data-t="map.empty"></p>
       </div>
     </section>
 
