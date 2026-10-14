@@ -18,7 +18,7 @@
     "componentes": {
       "docs": {
         "ficheros": 487,
-        "lineas": 87487
+        "lineas": 87530
       },
       "panel": {
         "ficheros": 68,
@@ -197,7 +197,7 @@
   "proceso": {
     "inicio": "2026-05",
     "meses": 6,
-    "commits": 2824,
+    "commits": 2839,
     "actividad": [
       {
         "mes": "2026-05",
@@ -231,7 +231,7 @@
       },
       {
         "mes": "2026-10",
-        "content": 757,
+        "content": 772,
         "vanilla": 80,
         "diagrams": 0
       }
@@ -377,7 +377,7 @@
       },
       {
         "semana": "2026-10-12",
-        "content": 160,
+        "content": 175,
         "vanilla": 24,
         "diagrams": 0
       }
