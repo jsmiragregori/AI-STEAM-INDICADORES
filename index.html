@@ -157,11 +157,34 @@
         <div class="card"><div class="stat" data-n="proceso.sesionesDocumentadas">–</div><h3 data-t="p.sessions.t"></h3><p data-t="p.sessions.p"></p></div>
         <div class="card"><div class="stat" data-n="proceso.documentos">–</div><h3 data-t="p.docs.t"></h3><p data-t="p.docs.p"></p></div>
       </div>
-      <div class="card chart-card" style="margin-top:1.25rem">
-        <p class="chart-title" data-t="chart.act.title"></p>
-        <p class="chart-sub" data-t="chart.act.sub"></p>
-        <div class="chart" id="chart-act"></div>
-        <p class="note" data-t="chart.act.note"></p>
+      <div class="card chart-card" id="card-pulse" style="margin-top:1.25rem">
+        <p class="chart-title" data-t="pulse.title"></p>
+        <p class="chart-sub" data-t="pulse.sub"></p>
+        <div id="pulse-body" hidden>
+          <div class="pp-stats" id="pulse-stats"></div>
+          <div class="pp-host" id="pulse-chart"></div>
+          <ul class="pp-legend" id="pulse-legend"></ul>
+          <p class="sr-only" id="pulse-live" aria-live="polite"></p>
+          <details class="table-view pp-table" id="pulse-details">
+            <summary data-t="pulse.table.show"></summary>
+            <div id="pulse-table"></div>
+          </details>
+        </div>
+        <p class="pp-empty" id="pulse-empty" hidden data-t="pulse.empty"></p>
+        <p class="note" data-t="pulse.note"></p>
+      </div>
+
+      <div class="card chart-card" id="card-growth" style="margin-top:1.25rem">
+        <p class="chart-title" data-t="growth.title"></p>
+        <p class="chart-sub" data-t="growth.sub"></p>
+        <div id="growth-body" hidden>
+          <div class="pp-host" id="growth-chart"></div>
+          <ul class="pp-legend" id="growth-legend"></ul>
+          <p class="sr-only" id="growth-live" aria-live="polite"></p>
+          <div class="pp-cases" id="growth-cases"></div>
+        </div>
+        <p class="pp-empty" id="growth-empty" hidden data-t="growth.empty"></p>
+        <p class="note" data-t="growth.note"></p>
       </div>
     </section>
 

@@ -5,6 +5,7 @@
 
 import { TEXTOS } from './textos.js';
 import { pintarMapa } from './mapa.js';
+import { pintarProceso } from './proceso.js';
 
 const IDIOMAS = ['es', 'en'];
 const CLAVE_IDIOMA = 'indicadores-idioma';
@@ -36,6 +37,12 @@ function mes(yyyymm, largo = false) {
   return new Intl.DateTimeFormat(idioma === 'es' ? 'es-ES' : 'en-GB', { month: largo ? 'long' : 'short', year: 'numeric' })
     .format(new Date(a, m - 1, 1));
 }
+function mesCorto(yyyymm) {
+  const [a, m] = yyyymm.split('-').map(Number);
+  return new Intl.DateTimeFormat(idioma === 'es' ? 'es-ES' : 'en-GB', { month: 'short' })
+    .format(new Date(a, m - 1, 1));
+}
+const anio = (yyyymm) => yyyymm.slice(0, 4);
 
 function t(clave, vars = {}) {
   const texto = TEXTOS[idioma][clave] ?? TEXTOS.es[clave] ?? clave;
@@ -84,55 +91,35 @@ function mostrarTipEn(e, etiqueta, valor) {
   const r = e.getBoundingClientRect();
   mostrarTip({ clientX: r.left + r.width / 2, clientY: r.top + 10 }, etiqueta, valor);
 }
-
-// --- Gráficos (HTML, para que se adapten a cualquier ancho) ----------------------
-function el(tag, clase, texto) {
-  const e = document.createElement(tag);
-  if (clase) e.className = clase;
-  if (texto != null) e.textContent = texto;
-  return e;
-}
-
-function tablaDatos(filas, cabecera) {
-  const det = el('details', 'table-view');
-  det.append(el('summary', null, t('table.show')));
-  const tabla = el('table');
-  const thead = el('thead');
-  const tr = el('tr');
-  tr.append(el('th', null, cabecera), el('th', 'num', t('table.value')));
-  thead.append(tr);
-  const tbody = el('tbody');
+/** Ficha ampliada: título, desglose por series (con su color) y total. */
+function mostrarTipDetalle(ev, titulo, filas) {
+  tip.replaceChildren();
+  const cab = document.createElement('span');
+  cab.className = 'tip-t';
+  cab.textContent = titulo;
+  const lista = document.createElement('span');
+  lista.className = 'tip-lista';
   for (const f of filas) {
-    const fila = el('tr');
-    fila.append(el('td', null, f.etiqueta), el('td', 'num', num(f.valor)));
-    tbody.append(fila);
+    const fila = document.createElement('span');
+    fila.className = 'tip-fila';
+    const punto = document.createElement('i');
+    punto.className = `dot ${f.clase}`;
+    const nombre = document.createElement('span');
+    nombre.className = 'tip-nom';
+    nombre.textContent = f.etiqueta;
+    const valor = document.createElement('b');
+    valor.className = 'tip-val';
+    valor.textContent = f.valor;
+    fila.append(punto, nombre, valor);
+    lista.append(fila);
   }
-  tabla.append(thead, tbody);
-  det.append(tabla);
-  return det;
+  tip.append(cab, lista);
+  const x = Math.max(8, Math.min(ev.clientX + 14, window.innerWidth - tip.offsetWidth - 8));
+  tip.style.left = `${x}px`;
+  tip.style.top = `${ev.clientY - 40}px`;
+  tip.classList.add('on');
 }
-
-/** Columnas verticales para una serie temporal corta. */
-function columnas(contenedor, filas) {
-  const max = Math.max(...filas.map(f => f.valor));
-  const zona = el('div', 'cols');
-  zona.setAttribute('role', 'list');
-  for (const f of filas) {
-    const col = el('div', 'col');
-    col.setAttribute('role', 'listitem');
-    col.setAttribute('aria-label', `${f.etiqueta}: ${num(f.valor)}`);
-    const pista = el('div', 'col-track');
-    const barra = el('div', 'col-bar');
-    barra.style.height = `${Math.max(1, (f.valor / max) * 100)}%`;
-    const valor = el('span', 'col-value', num(f.valor));
-    pista.append(valor, barra);
-    col.append(pista, el('span', 'col-label', f.etiqueta));
-    col.addEventListener('mousemove', ev => mostrarTip(ev, f.largo, num(f.valor)));
-    col.addEventListener('mouseleave', ocultarTip);
-    zona.append(col);
-  }
-  contenedor.replaceChildren(zona, tablaDatos(filas.map(f => ({ ...f, etiqueta: f.largo })), t('table.month')));
-}
+const TIP = { mostrar: mostrarTip, mostrarEn: mostrarTipEn, detalle: mostrarTipDetalle, ocultar: ocultarTip };
 
 // --- Pintado -----------------------------------------------------------------------
 function pintar() {
@@ -149,7 +136,6 @@ function pintar() {
   const calc = calculados(datos);
   const vars = variables(datos, calc);
   const porClave = {
-    'chart.act.sub': { total: num(datos.proceso.commits) },
     'b.strings.p': { total: num(calc.textosTraducidos) },
   };
   for (const e of document.querySelectorAll('[data-t]')) {
@@ -161,16 +147,12 @@ function pintar() {
     e.textContent = typeof valor === 'number' ? num(valor) : '–';
   }
 
-  pintarMapa(datos, {
-    t, num,
-    tip: { mostrar: mostrarTip, mostrarEn: mostrarTipEn, ocultar: ocultarTip },
+  pintarMapa(datos, { t, num, tip: TIP });
+  pintarProceso(datos, {
+    t, num, mes, mesCorto, anio, fecha,
+    inicio: vars.inicio,
+    tip: TIP,
   });
-
-  columnas(document.getElementById('chart-act'), datos.proceso.actividad.map(a => ({
-    etiqueta: mes(a.mes),
-    largo: mes(a.mes, true),
-    valor: (a.content || 0) + (a.vanilla || 0) + (a.diagrams || 0),
-  })));
 }
 
 function cambiarIdioma(nuevo) {
