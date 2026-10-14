@@ -5,6 +5,7 @@
 
 import { TEXTOS } from './textos.js';
 import { pintarMapa } from './mapa.js';
+import { pintarPruebas } from './pruebas.js';
 import { pintarProceso } from './proceso.js';
 
 const IDIOMAS = ['es', 'en'];
@@ -121,6 +122,55 @@ function mostrarTipDetalle(ev, titulo, filas) {
 }
 const TIP = { mostrar: mostrarTip, mostrarEn: mostrarTipEn, detalle: mostrarTipDetalle, ocultar: ocultarTip };
 
+// --- V5 · Conteo animado de las cifras ---------------------------------------------
+// Cada [data-n] cuenta desde cero la primera vez que aparece en pantalla; si
+// ya no hay que animar (prefers-reduced-motion o sin IntersectionObserver),
+// se deja el valor final formateado igual que hoy. El valor final es siempre
+// el del JSON: al terminar, el texto se fija con num().
+const DUR_CIFRA = 900;
+const cifras = new WeakSet();   // ya animadas o en animación
+const cifrasEnEspera = new Set(); // observando, aún sin entrar en pantalla
+let observadorCifras = null;
+
+const reducido = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function contar(e, objetivo) {
+  const inicio = performance.now();
+  const paso = (t) => {
+    const avance = Math.min(1, (t - inicio) / DUR_CIFRA);
+    const suave = 1 - Math.pow(1 - avance, 3);
+    e.textContent = num(Math.round(objetivo * suave));
+    if (avance < 1) requestAnimationFrame(paso);
+    else e.textContent = num(objetivo);
+  };
+  requestAnimationFrame(paso);
+}
+function animarCifras() {
+  if (!datos) return;
+  const animable = !reducido() && 'IntersectionObserver' in window;
+  if (animable && !observadorCifras) {
+    observadorCifras = new IntersectionObserver((entradas) => {
+      for (const en of entradas) {
+        if (!en.isIntersecting) continue;
+        const e = en.target;
+        observadorCifras.unobserve(e);
+        cifrasEnEspera.delete(e);
+        cifras.add(e);
+        const objetivo = Number(e.dataset.v);
+        if (reducido() || !Number.isFinite(objetivo)) e.textContent = num(objetivo);
+        else contar(e, objetivo);
+      }
+    }, { threshold: 0.5 });
+  }
+  for (const e of document.querySelectorAll('[data-n]')) {
+    if (cifras.has(e)) continue;
+    const objetivo = Number(e.dataset.v);
+    if (!animable || !Number.isFinite(objetivo)) continue;
+    e.textContent = num(0);
+    cifrasEnEspera.add(e);
+    observadorCifras.observe(e);
+  }
+}
+
 // --- Pintado -----------------------------------------------------------------------
 function pintar() {
   document.documentElement.lang = idioma;
@@ -144,10 +194,17 @@ function pintar() {
   for (const e of document.querySelectorAll('[data-n]')) {
     const ruta = e.dataset.n;
     const valor = ruta.startsWith('calc.') ? calc[ruta.slice(5)] : leer(datos, ruta);
-    e.textContent = typeof valor === 'number' ? num(valor) : '–';
+    if (typeof valor === 'number') {
+      e.dataset.v = String(valor);
+      e.textContent = num(valor);
+    } else {
+      e.textContent = '–';
+    }
   }
+  animarCifras();
 
   pintarMapa(datos, { t, num, tip: TIP });
+  pintarPruebas(datos, { t, num, tip: TIP });
   pintarProceso(datos, {
     t, num, mes, mesCorto, anio, fecha,
     inicio: vars.inicio,

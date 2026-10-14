@@ -238,7 +238,11 @@ function etiquetaFn(claveApp, claveFn) {
   return texto === clave ? claveFn : texto;
 }
 function pluralFicheros(n) { return n === 1 ? ctx.t('file.one') : ctx.t('files'); }
-function pctTexto(p) { return ctx.t('map.pctFmt', { p: ctx.num(p, 1) }); }
+/** Porcentaje con un decimal; si algo positivo redondea a 0,0, se dice «< 0,1 %». */
+function pctTexto(p) {
+  if (p > 0 && p < 0.05) return ctx.t('map.pctLess');
+  return ctx.t('map.pctFmt', { p: ctx.num(p, 1) });
+}
 function unidadDe(metrica, valor) {
   return metrica === 'lineas' ? ctx.t('lines') : pluralFicheros(valor);
 }
@@ -301,10 +305,12 @@ function crearPieza(app) {
   const nombreCab = el('span', 'tm-name');
   const figsCab = el('span', 'tm-figs');
   const valCab = el('b', 'tm-val');
-  const sepCab = el('span', 'tm-sep', '·');
+  const sepCab = el('span', 'tm-sep', ' · ');
   const pctCab = el('span', 'tm-pct');
   figsCab.append(valCab, sepCab, pctCab);
-  cabeza.append(nombreCab, figsCab);
+  // El espacio entre nombre y cifras no se ve (cabeza flex), pero forma parte
+  // del texto del elemento: así el nombre accesible puede empezar por él.
+  cabeza.append(nombreCab, document.createTextNode(' '), figsCab);
 
   const pt = {
     app, bloque, cabeza, nombreCab, figsCab, valCab, sepCab, pctCab, funciones: [],
@@ -316,6 +322,7 @@ function crearPieza(app) {
     const tile = el('div', `tm-tile ${claseApp}`);
     tile.dataset.app = app.clave;
     tile.tabIndex = 0;
+    tile.setAttribute('role', 'img');
     tile.classList.add(`n${Math.min(i + 1, TONOS.length)}`);
     const dentro = el('div', 'tm-in');
     const caja = el('div', 'tm-caja');
@@ -341,13 +348,13 @@ function actualizarPieza(pt) {
   pt.nombreCab.textContent = app.etiqueta;
   pt.valCab.textContent = ctx.num(valor);
   pt.pctCab.textContent = pctTexto(porcentaje(valor, modelo.totales[estado.metrica]));
+  // El nombre accesible empieza por el texto visible, con sus mismos separadores.
+  const visible = `${pt.nombreCab.textContent} ${pt.valCab.textContent} · ${pt.pctCab.textContent}`;
   const claveAria = app.funciones.length === 1 ? 'map.aria.app.one' : 'map.aria.app';
-  pt.cabeza.setAttribute('aria-label', ctx.t(claveAria, {
-    app: app.etiqueta,
-    valor: `${ctx.num(valor)} ${unidadDe(estado.metrica, valor)}`,
-    pct: pctTexto(porcentaje(valor, modelo.totales[estado.metrica])),
+  pt.cabeza.setAttribute('aria-label', `${visible}. ${ctx.t(claveAria, {
     n: ctx.num(app.funciones.length),
-  }));
+    unidad: unidadDe(estado.metrica, valor),
+  })}`);
   for (const f of pt.funciones) {
     const v = valorDe(f.fn, estado.metrica);
     const totalNivel = estado.nivel === 'app' ? app[estado.metrica] : modelo.totales[estado.metrica];

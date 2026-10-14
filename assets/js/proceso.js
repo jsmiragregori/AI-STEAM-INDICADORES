@@ -27,6 +27,7 @@ let ctx = null;     // { t, num, mes, mesCorto, anio, fecha, inicio, tip } del p
 let pulso = null;   // gráfico semanal
 let crec = null;    // gráfico mensual
 let activo = null;  // gráfico cuya cruz de lectura está visible (tooltip compartido)
+let contador = 0;   // identificadores únicos para los patrones SVG
 
 const num2 = (v) => { const n = Number(v); return Number.isFinite(n) && n > 0 ? n : 0; };
 const totalDe = (p, series) => series.reduce((s, x) => s + num2(p[x.clave]), 0);
@@ -52,7 +53,7 @@ export function pintarProceso(json, contexto) {
   activo = null;
   ctx.tip.ocultar();
   const proceso = (json && json.proceso) || {};
-  pintarPulso(seriePulso(proceso.semanas));
+  pintarPulso(seriePulso(proceso.semanas), json && json.generado);
   pintarCrecimiento(serieCrecimiento(proceso.crecimiento));
 }
 
@@ -171,7 +172,8 @@ function crearGrafico(host, live, opciones) {
   host.append(svg);
   const g = {
     opciones, host, svg, live,
-    puntos: null, indice: null, modo: null,
+    id: ++contador,
+    puntos: null, indice: null, modo: null, enCurso: false,
     W: 0, H: 0, m: null, ph: 0, pw: 0, escala: null,
     x: [], acum: [], marcas: [], yPx: null, cuadro: false, timer: 0,
   };
@@ -233,6 +235,20 @@ function dibujar(g) {
     rotulo.textContent = tick.texto;
     plot.append(rotulo);
   }
+  // Semana en curso: trama diagonal sobre su banda, delimitada por una guía.
+  if (g.enCurso && n >= 2) {
+    const pid = `pp-hatch-${g.id}`;
+    const defs = svgEl('defs');
+    const patron = svgEl('pattern', 'pp-hatch-pat', {
+      id: pid, width: 7, height: 7, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)',
+    });
+    patron.append(svgEl('line', 'pp-hatch-line', { x1: 0, y1: 0, x2: 0, y2: 7 }));
+    defs.append(patron);
+    const inicio = (g.x[n - 2] + g.x[n - 1]) / 2;
+    plot.append(defs, svgEl('rect', 'pp-hatch', {
+      x: inicio, y: m.top, width: Math.max(0, W - m.right - inicio), height: ph, fill: `url(#${pid})`,
+    }), svgEl('line', 'pp-hatch-guia', { x1: inicio, y1: m.top, x2: inicio, y2: m.top + ph }));
+  }
   // Áreas apiladas, en el orden de las series.
   for (let k = 0; k < g.opciones.series.length; k++) {
     const arriba = acum[k];
@@ -275,7 +291,8 @@ function cruzar(g, i, conTip = true) {
     marca.classList.toggle('pp-oculto', num2(g.puntos[i][g.opciones.series[k].clave]) <= 0);
   });
   const p = g.puntos[i];
-  const titulo = g.opciones.titulo(p);
+  let titulo = g.opciones.titulo(p);
+  if (g.enCurso && i === n - 1) titulo += ` · ${ctx.t('pulse.tip.current')}`;
   const filas = g.opciones.series.map((s) => ({
     clase: s.clase, etiqueta: ctx.t(s.texto), valor: ctx.num(num2(p[s.clave])),
   }));
@@ -349,9 +366,19 @@ function conectar(g) {
 }
 
 // --- V2 · Pulso semanal ---------------------------------------------------------------
-function pintarPulso(puntos) {
+/** ¿La última semana registrada es la que aún corre a la fecha `generado`? */
+function esEnCurso(lunes, generado) {
+  if (typeof lunes !== 'string' || typeof generado !== 'string') return false;
+  const [a, m, d] = lunes.split('-').map(Number);
+  if (!a || !m || !d) return false;
+  const fin = new Date(Date.UTC(a, m - 1, d + 6));
+  return fin.toISOString().slice(0, 10) >= generado;
+}
+
+function pintarPulso(puntos, generado) {
   pulso.puntos = puntos;
   pulso.indice = null;
+  pulso.enCurso = !!puntos && esEnCurso(puntos[puntos.length - 1].fecha, generado);
   ctx.tip.ocultar();
   if (!puntos) {
     pulso.live.textContent = '';
@@ -361,19 +388,29 @@ function pintarPulso(puntos) {
   }
   UI.emptyP.hidden = true;
   UI.bodyP.hidden = false;
-  pintarStats(puntos);
+  pintarStats(puntos, pulso.enCurso);
   dibujar(pulso);
   pintarLeyenda(UI.legendP, REPOS);
+  if (pulso.enCurso) {
+    const li = nodo('li', 'pp-encurso');
+    const sw = nodo('i', 'sw-encurso');
+    sw.setAttribute('aria-hidden', 'true');
+    li.append(sw, nodo('span', null, ctx.t('pulse.legend.current')));
+    UI.legendP.append(li);
+  }
   pintarTablaPulso(puntos);
   observar(UI.cardP);
 }
 
-/** Tres cifras calculadas en cliente: semanas activas, media semanal y récord. */
-function pintarStats(puntos) {
+/** Tres cifras calculadas en cliente: semanas activas, media semanal y récord.
+    La semana en curso queda fuera de la media y del récord: aún puede crecer. */
+function pintarStats(puntos, enCurso) {
+  const base = enCurso ? puntos.slice(0, -1) : puntos;
   const activas = puntos.filter((p) => totalDe(p, REPOS) > 0).length;
-  const total = puntos.reduce((s, p) => s + totalDe(p, REPOS), 0);
-  let rec = puntos[0];
-  for (const p of puntos) if (totalDe(p, REPOS) > totalDe(rec, REPOS)) rec = p;
+  const total = base.reduce((s, p) => s + totalDe(p, REPOS), 0);
+  let rec = base[0] || puntos[0];
+  for (const p of base) if (totalDe(p, REPOS) > totalDe(rec, REPOS)) rec = p;
+  const media = Math.round(total / Math.max(1, base.length));
   const cifras = [
     {
       v: ctx.num(activas),
@@ -381,7 +418,7 @@ function pintarStats(puntos) {
       s: ctx.t('pulse.stat.weeks.sub', { n: ctx.num(puntos.length) }),
     },
     {
-      v: ctx.num(Math.round(total / puntos.length)),
+      v: ctx.num(media),
       n: ctx.t('pulse.stat.avg'),
       s: ctx.t('pulse.stat.avg.sub', { inicio: ctx.inicio }),
     },
