@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-14",
+  "generado": "2026-10-16",
   "contenido": {
     "seccionesPrincipales": 7,
     "socios": 23,
@@ -17,20 +17,20 @@
   "codigo": {
     "componentes": {
       "docs": {
-        "ficheros": 487,
-        "lineas": 87530
+        "ficheros": 492,
+        "lineas": 88504
       },
       "panel": {
-        "ficheros": 68,
-        "lineas": 25619
+        "ficheros": 69,
+        "lineas": 26214
       },
       "tests": {
-        "ficheros": 321,
-        "lineas": 62760
+        "ficheros": 328,
+        "lineas": 64139
       },
       "tooling": {
-        "ficheros": 98,
-        "lineas": 33084
+        "ficheros": 99,
+        "lineas": 33290
       },
       "site": {
         "ficheros": 31,
@@ -79,22 +79,22 @@
         {
           "clave": "editores",
           "ficheros": 16,
-          "lineas": 13344
+          "lineas": 13400
         },
         {
           "clave": "contenido",
-          "ficheros": 26,
-          "lineas": 5216
+          "ficheros": 27,
+          "lineas": 5441
         },
         {
           "clave": "plataforma",
           "ficheros": 6,
-          "lineas": 843
+          "lineas": 880
         },
         {
           "clave": "proteccion",
           "ficheros": 20,
-          "lineas": 6216
+          "lineas": 6493
         }
       ],
       "publicacion": [
@@ -118,12 +118,12 @@
         {
           "clave": "entrega",
           "ficheros": 13,
-          "lineas": 7965
+          "lineas": 8059
         },
         {
           "clave": "contenido",
           "ficheros": 14,
-          "lineas": 3789
+          "lineas": 3808
         },
         {
           "clave": "documentos",
@@ -138,21 +138,26 @@
         {
           "clave": "proteccion",
           "ficheros": 28,
-          "lineas": 6326
+          "lineas": 6342
+        },
+        {
+          "clave": "otros",
+          "ficheros": 1,
+          "lineas": 77
         }
       ],
       "tests": [
         {
           "clave": "proteccion",
-          "ficheros": 159,
-          "lineas": 25681,
-          "casos": 1667
+          "ficheros": 165,
+          "lineas": 26850,
+          "casos": 1738
         },
         {
           "clave": "panel",
-          "ficheros": 57,
-          "lineas": 15747,
-          "casos": 1051
+          "ficheros": 58,
+          "lineas": 15817,
+          "casos": 1054
         },
         {
           "clave": "publicacion",
@@ -169,14 +174,14 @@
         {
           "clave": "entrega",
           "ficheros": 27,
-          "lineas": 6647,
-          "casos": 442
+          "lineas": 6754,
+          "casos": 450
         },
         {
           "clave": "contenido",
           "ficheros": 7,
-          "lineas": 2128,
-          "casos": 119
+          "lineas": 2161,
+          "casos": 122
         },
         {
           "clave": "otros",
@@ -187,17 +192,17 @@
       ]
     },
     "lenguajes": {
-      "Python": 94615,
+      "Python": 96795,
       "JavaScript": 35205,
       "CSS": 750,
       "HTML": 27
     },
-    "casosDePrueba": 4033
+    "casosDePrueba": 4118
   },
   "proceso": {
     "inicio": "2026-05",
     "meses": 6,
-    "commits": 2839,
+    "commits": 2878,
     "actividad": [
       {
         "mes": "2026-05",
@@ -231,7 +236,7 @@
       },
       {
         "mes": "2026-10",
-        "content": 772,
+        "content": 811,
         "vanilla": 80,
         "diagrams": 0
       }
@@ -377,7 +382,7 @@
       },
       {
         "semana": "2026-10-12",
-        "content": 175,
+        "content": 214,
         "vanilla": 24,
         "diagrams": 0
       }
@@ -431,14 +436,14 @@
       {
         "mes": "2026-10",
         "site": 9134,
-        "panel": 25619,
+        "panel": 26214,
         "publicacion": 9506,
-        "herramientas": 23578,
-        "tests": 62760,
-        "casos": 4033
+        "herramientas": 23784,
+        "tests": 64139,
+        "casos": 4118
       }
     ],
-    "sesionesDocumentadas": 468,
-    "documentos": 487
+    "sesionesDocumentadas": 469,
+    "documentos": 492
   }
 }
