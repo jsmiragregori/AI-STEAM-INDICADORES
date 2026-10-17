@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-16",
+  "generado": "2026-10-17",
   "contenido": {
     "seccionesPrincipales": 7,
     "socios": 23,
@@ -17,20 +17,20 @@
   "codigo": {
     "componentes": {
       "docs": {
-        "ficheros": 492,
-        "lineas": 88504
+        "ficheros": 506,
+        "lineas": 89678
       },
       "panel": {
-        "ficheros": 69,
-        "lineas": 26214
+        "ficheros": 71,
+        "lineas": 27451
       },
       "tests": {
-        "ficheros": 328,
-        "lineas": 64139
+        "ficheros": 346,
+        "lineas": 69097
       },
       "tooling": {
-        "ficheros": 99,
-        "lineas": 33290
+        "ficheros": 103,
+        "lineas": 34982
       },
       "site": {
         "ficheros": 31,
@@ -79,22 +79,22 @@
         {
           "clave": "editores",
           "ficheros": 16,
-          "lineas": 13400
+          "lineas": 13519
         },
         {
           "clave": "contenido",
-          "ficheros": 27,
-          "lineas": 5441
+          "ficheros": 29,
+          "lineas": 6226
         },
         {
           "clave": "plataforma",
           "ficheros": 6,
-          "lineas": 880
+          "lineas": 896
         },
         {
           "clave": "proteccion",
           "ficheros": 20,
-          "lineas": 6493
+          "lineas": 6810
         }
       ],
       "publicacion": [
@@ -118,12 +118,12 @@
         {
           "clave": "entrega",
           "ficheros": 13,
-          "lineas": 8059
+          "lineas": 8213
         },
         {
           "clave": "contenido",
           "ficheros": 14,
-          "lineas": 3808
+          "lineas": 3844
         },
         {
           "clave": "documentos",
@@ -142,27 +142,27 @@
         },
         {
           "clave": "otros",
-          "ficheros": 1,
-          "lineas": 77
+          "ficheros": 5,
+          "lineas": 1579
         }
       ],
       "tests": [
         {
           "clave": "proteccion",
           "ficheros": 165,
-          "lineas": 26850,
+          "lineas": 26920,
           "casos": 1738
         },
         {
           "clave": "panel",
-          "ficheros": 58,
-          "lineas": 15817,
-          "casos": 1054
+          "ficheros": 73,
+          "lineas": 20308,
+          "casos": 1330
         },
         {
           "clave": "publicacion",
           "ficheros": 34,
-          "lineas": 7295,
+          "lineas": 7297,
           "casos": 509
         },
         {
@@ -173,36 +173,36 @@
         },
         {
           "clave": "entrega",
-          "ficheros": 27,
-          "lineas": 6754,
-          "casos": 450
+          "ficheros": 29,
+          "lineas": 6999,
+          "casos": 461
         },
         {
           "clave": "contenido",
-          "ficheros": 7,
-          "lineas": 2161,
-          "casos": 122
+          "ficheros": 8,
+          "lineas": 2306,
+          "casos": 133
         },
         {
           "clave": "otros",
           "ficheros": 4,
-          "lineas": 340,
+          "lineas": 345,
           "casos": 15
         }
       ]
     },
     "lenguajes": {
-      "Python": 96795,
-      "JavaScript": 35205,
+      "Python": 104680,
+      "JavaScript": 35207,
       "CSS": 750,
       "HTML": 27
     },
-    "casosDePrueba": 4118
+    "casosDePrueba": 4416
   },
   "proceso": {
     "inicio": "2026-05",
     "meses": 6,
-    "commits": 2878,
+    "commits": 2919,
     "actividad": [
       {
         "mes": "2026-05",
@@ -236,7 +236,7 @@
       },
       {
         "mes": "2026-10",
-        "content": 811,
+        "content": 852,
         "vanilla": 80,
         "diagrams": 0
       }
@@ -382,7 +382,7 @@
       },
       {
         "semana": "2026-10-12",
-        "content": 214,
+        "content": 255,
         "vanilla": 24,
         "diagrams": 0
       }
@@ -436,14 +436,14 @@
       {
         "mes": "2026-10",
         "site": 9134,
-        "panel": 26214,
+        "panel": 27451,
         "publicacion": 9506,
-        "herramientas": 23784,
-        "tests": 64139,
-        "casos": 4118
+        "herramientas": 25476,
+        "tests": 69097,
+        "casos": 4416
       }
     ],
-    "sesionesDocumentadas": 469,
-    "documentos": 492
+    "sesionesDocumentadas": 475,
+    "documentos": 506
   }
 }
