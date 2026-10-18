@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-17",
+  "generado": "2026-10-18",
   "contenido": {
     "seccionesPrincipales": 7,
     "socios": 23,
@@ -8,7 +8,7 @@
     "cadenasTraducidas": 1212
   },
   "plataforma": {
-    "seccionesPanel": 16,
+    "seccionesPanel": 17,
     "cargadores": 14,
     "dependenciasEjecucionSitio": 0,
     "bibliotecasAutoalojadas": 4,
@@ -17,20 +17,20 @@
   "codigo": {
     "componentes": {
       "docs": {
-        "ficheros": 506,
-        "lineas": 89678
+        "ficheros": 511,
+        "lineas": 90167
       },
       "panel": {
-        "ficheros": 71,
-        "lineas": 27451
+        "ficheros": 73,
+        "lineas": 28957
       },
       "tests": {
-        "ficheros": 346,
-        "lineas": 69097
+        "ficheros": 351,
+        "lineas": 70847
       },
       "tooling": {
         "ficheros": 103,
-        "lineas": 34982
+        "lineas": 35049
       },
       "site": {
         "ficheros": 31,
@@ -78,23 +78,23 @@
       "panel": [
         {
           "clave": "editores",
-          "ficheros": 16,
-          "lineas": 13519
+          "ficheros": 17,
+          "lineas": 13864
         },
         {
           "clave": "contenido",
-          "ficheros": 29,
-          "lineas": 6226
+          "ficheros": 30,
+          "lineas": 7106
         },
         {
           "clave": "plataforma",
           "ficheros": 6,
-          "lineas": 896
+          "lineas": 928
         },
         {
           "clave": "proteccion",
           "ficheros": 20,
-          "lineas": 6810
+          "lineas": 7059
         }
       ],
       "publicacion": [
@@ -138,26 +138,26 @@
         {
           "clave": "proteccion",
           "ficheros": 28,
-          "lineas": 6342
+          "lineas": 6345
         },
         {
           "clave": "otros",
           "ficheros": 5,
-          "lineas": 1579
+          "lineas": 1643
         }
       ],
       "tests": [
         {
           "clave": "proteccion",
-          "ficheros": 165,
-          "lineas": 26920,
-          "casos": 1738
+          "ficheros": 167,
+          "lineas": 27427,
+          "casos": 1774
         },
         {
           "clave": "panel",
-          "ficheros": 73,
-          "lineas": 20308,
-          "casos": 1330
+          "ficheros": 76,
+          "lineas": 21543,
+          "casos": 1402
         },
         {
           "clave": "publicacion",
@@ -174,8 +174,8 @@
         {
           "clave": "entrega",
           "ficheros": 29,
-          "lineas": 6999,
-          "casos": 461
+          "lineas": 7007,
+          "casos": 462
         },
         {
           "clave": "contenido",
@@ -192,17 +192,17 @@
       ]
     },
     "lenguajes": {
-      "Python": 104680,
+      "Python": 108003,
       "JavaScript": 35207,
       "CSS": 750,
       "HTML": 27
     },
-    "casosDePrueba": 4416
+    "casosDePrueba": 4525
   },
   "proceso": {
     "inicio": "2026-05",
     "meses": 6,
-    "commits": 2919,
+    "commits": 2943,
     "actividad": [
       {
         "mes": "2026-05",
@@ -236,7 +236,7 @@
       },
       {
         "mes": "2026-10",
-        "content": 852,
+        "content": 876,
         "vanilla": 80,
         "diagrams": 0
       }
@@ -382,7 +382,7 @@
       },
       {
         "semana": "2026-10-12",
-        "content": 255,
+        "content": 279,
         "vanilla": 24,
         "diagrams": 0
       }
@@ -436,14 +436,14 @@
       {
         "mes": "2026-10",
         "site": 9134,
-        "panel": 27451,
+        "panel": 28957,
         "publicacion": 9506,
-        "herramientas": 25476,
-        "tests": 69097,
-        "casos": 4416
+        "herramientas": 25543,
+        "tests": 70847,
+        "casos": 4525
       }
     ],
     "sesionesDocumentadas": 475,
-    "documentos": 506
+    "documentos": 511
   }
 }
